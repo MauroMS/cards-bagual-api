@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace shithead_cards_api
+namespace ShitheadCardsApi
 {
     public class Program
     {

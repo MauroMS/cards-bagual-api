@@ -1,6 +1,6 @@
 using System;
 
-namespace shithead_cards_api
+namespace ShitheadCardsApi
 {
     public class WeatherForecast
     {
