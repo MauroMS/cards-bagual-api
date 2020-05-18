@@ -1,15 +1,14 @@
 ﻿using ShitheadCardsApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ShitheadCardsApi.Interfaces
 {
     public interface IGameService
     {
-        void CreateGame();
-
-        Game GetGame(string name);
+        Game CreateOrJoinGame(string gameName, string playerName);
+        Game GetGame(string gameName, string playerId);
+        Game SwitchPlayerCards(string gameName, string playerId, string openCard, string handCard);
+        Game SetPlayerToStart(string gameName, object playerId);
+        Game DiscardPlayerCards(string gameName, string playerId, string cards);
+        Game MoveTableCardsToPlayer(string gameName, string playerId);
     }
 }

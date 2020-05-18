@@ -12,20 +12,22 @@ namespace ShitheadCardsApi
     public class GameService : IGameService
     {
         private ShitheadDBContext _ctx;
-        public GameService(ShitheadDBContext ctx)
+        private IShitheadService shitheadService;
+        public GameService(ShitheadDBContext ctx, IShitheadService shitheadService)
         {
             _ctx = ctx;
+            this.shitheadService = shitheadService;
         }
 
-        List<string> allCards = new List<string>(){ "2H", "2D", "2C", "2S", "3H", "3D", "3C", "3S", "4H", "4D", "4C", "4S", "5H", "5D", "5C", "5S", "6H", "6D", "6C", "6S", "7H", "7D", "7C", "7S", "8H", "8D", "8C", "8S", "9H", "9D", "9C", "9S", "0H", "0D", "0C", "0S", "JH", "JD", "JC", "JS", "QH", "QD", "QC", "QS", "KH", "KD", "KC", "KS", "AH", "AD", "AC", "AS" };
-
-        public void CreateGame()
+        public Game CreateOrJoinGame(string gameName, string playerName)
         {
+            List<string> cards = shitheadService.CreateDeck();
+
             var game = new Game
             {
-                Name = "Test",
+                Name = gameName,
                 BurnedCardsCount = 5,
-                CardsInDeck = { },
+                CardsInDeck = cards,
                 LastBurnedCard = "5G",
                 Players = {
                         new Player() {
@@ -49,9 +51,16 @@ namespace ShitheadCardsApi
                 TableCards = { }
             };
 
+            SaveGame(game);
+
+            return FindGame(gameName);
+        }
+
+        private void SaveGame(Game game)
+        {
             var dbModel = new GameDbModel()
             {
-                Name = "Test",
+                Name = game.Name,
                 GameJson = Serialize(game)
             };
 
@@ -59,9 +68,14 @@ namespace ShitheadCardsApi
             _ctx.SaveChanges();
         }
 
+        private Game FindGame(string name)
+        {
+            return Deserialize(_ctx.Find<GameDbModel>(name));
+        }
+
         public Game GetGame(string name)
         {
-            return Deserialize(_ctx.ShitheadGames.FirstOrDefault(game => game.Name.Equals(name)));
+            return Deserialize(_ctx.Find<GameDbModel>(name));
         }
 
         private string Serialize(Game game)
@@ -82,6 +96,31 @@ namespace ShitheadCardsApi
                 WriteIndented = true
             };
             return JsonSerializer.Deserialize<Game>(game.GameJson, options);
+        }
+
+        public Game GetGame(string gameName, string playerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Game SwitchPlayerCards(string gameName, string playerId, string openCard, string handCard)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Game SetPlayerToStart(string gameName, object playerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Game DiscardPlayerCards(string gameName, string playerId, string cards)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Game MoveTableCardsToPlayer(string gameName, string playerId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
