@@ -199,6 +199,9 @@ namespace ShitheadCardsApi
                 if (player.Status != StatusEnum.PLAYING)
                     throw new GameException("Player not in playing mode: " + player.Status);
 
+                if (player.Name != game.PlayerNameTurn)
+                    throw new GameException("Player not in turn");
+
                 player.InHandCards.AddRange(game.TableCards);
                 game.TableCards.Clear();
 
