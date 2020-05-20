@@ -9,13 +9,14 @@ namespace ShitheadCardsApi.Models
             InHandCards = new List<string>();
             DownCards = new List<string>();
             OpenCards = new List<string>();
+            Status = StatusEnum.SETUP;
         }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public List<string> InHandCards { get; set; }
         public List<string> DownCards { get; set; }
         public List<string> OpenCards { get; set; }
-        public int Status { get; set; }
+        public StatusEnum Status { get; set; }
     }
 }

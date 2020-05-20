@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShitheadCardsApi.Interfaces;
 using ShitheadCardsApi.Models;
+using ShitheadCardsApi.ViewModels;
 
 namespace ShitheadCardsApi.Controllers
 {
@@ -31,16 +28,19 @@ namespace ShitheadCardsApi.Controllers
 
 
         [HttpGet("game/{gameName}/player/{playerName}")]
-        public Game GetCreateOrJoinGame(string gameName, string playerName)
+        public CreateOrJoinGameResponse GetCreateOrJoinGame(string gameName, string playerName)
         {
-            return _gameService.CreateOrJoinGame(gameName, playerName);
+            Game game = _gameService.CreateOrJoinGame(gameName, playerName);
+
+            return new CreateOrJoinGameResponse(game, playerName);
         }
 
 
         [HttpGet("game/{gameName}/{playerId}")]
-        public Game GetGame(string gameName, string playerId)
+        public GameResponse GetGame(string gameName, string playerId)
         {
-            return _gameService.GetGame(gameName, playerId);
+            Game game = _gameService.GetGame(gameName);
+            return new GameResponse(game, playerId);
         }
 
         [HttpGet("game/{gameName}/{playerId}/switch/{openCard}/{handCard}")]

@@ -27,6 +27,9 @@ namespace ShitheadCardsApi
 
             services.AddScoped<IGameService, GameService>();
             services.AddSingleton<IShitheadService, ShitheadService>();
+
+            services.AddCors();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,8 +41,6 @@ namespace ShitheadCardsApi
             }
 
             app.UseRouting();
-
-            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

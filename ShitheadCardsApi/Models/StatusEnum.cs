@@ -1,9 +1,12 @@
-﻿namespace ShitheadCardsApi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ShitheadCardsApi.Models
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum StatusEnum
     {
-        SETUP = 0,
-        PLAYING = 1,
-        OUT = 2
+        SETUP,
+        PLAYING,
+        OUT
     }
 }
