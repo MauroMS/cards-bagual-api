@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ShitheadCardsApi.Interfaces;
 using ShitheadCardsApi.Models;
 using ShitheadCardsApi.ViewModels;
+using System;
 
 namespace ShitheadCardsApi.Controllers
 {
@@ -21,54 +22,99 @@ namespace ShitheadCardsApi.Controllers
         }
 
         [HttpGet("")]
-        public string Get()
+        public IActionResult Get()
         {
-            return "OK";
+            return Ok("OK");
         }
 
 
+        /// <summary>
+        /// Creates or joins an existing Game, based on gameName
+        /// </summary>
+        /// <param name="gameName">Game name</param>
+        /// <param name="playerName">Player Name</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/player/{playerName}")]
-        public CreateOrJoinGameResponse GetCreateOrJoinGame(string gameName, string playerName)
+        public IActionResult GetCreateOrJoinGame(string gameName, string playerName)
         {
-            Game game = _gameService.CreateOrJoinGame(gameName, playerName);
-
-            return new CreateOrJoinGameResponse(game, playerName);
+            try
+            {
+                Game game = _gameService.CreateOrJoinGame(gameName, playerName);
+                return Ok(new CreateOrJoinGameResponse(game, playerName));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
 
+        /// <summary>
+        /// Get current state of the game, with the data related to playerId
+        /// </summary>
+        /// <param name="gameName">Game Name</param>
+        /// <param name="playerId">Player Id</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/{playerId}")]
-        public GameResponse GetGame(string gameName, string playerId)
+        public IActionResult GetGame(string gameName, string playerId)
         {
             Game game = _gameService.GetGame(gameName);
-            return new GameResponse(game, playerId);
+            return Ok(new GameResponse(game, playerId));
         }
 
+        /// <summary>
+        /// Move card from your hand to the open cards
+        /// </summary>
+        /// <param name="gameName">Game Name</param>
+        /// <param name="playerId">Player Id</param>
+        /// <param name="openCard">Open face up card</param>
+        /// <param name="handCard">Hand Card</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/{playerId}/switch/{openCard}/{handCard}")]
-        public GameResponse GetSwitchPlayerCard(string gameName, string playerId, string openCard, string handCard)
+        public IActionResult GetSwitchPlayerCard(string gameName, string playerId, string openCard, string handCard)
         {
             Game game = _gameService.SwitchPlayerCards(gameName, playerId, openCard, handCard);
-            return new GameResponse(game, playerId);
+            return Ok(new GameResponse(game, playerId));
         }
 
+        /// <summary>
+        /// Set player status from SETUP to PLAYING. And Updates the game status to playing, if all players are ready.
+        /// </summary>
+        /// <param name="gameName">Game Name</param>
+        /// <param name="playerId">Player Id</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/{playerId}/start")]
-        public GameResponse GetStartPlayer(string gameName, string playerId)
+        public IActionResult GetStartPlayer(string gameName, string playerId)
         {
             Game game = _gameService.SetPlayerToStart(gameName, playerId);
-            return new GameResponse(game, playerId);
+            return Ok(new GameResponse(game, playerId));
         }
 
+        /// <summary>
+        /// Draw table cards to player's hand.
+        /// </summary>
+        /// <param name="gameName">Game Name</param>
+        /// <param name="playerId">Player Id</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/{playerId}/table")]
-        public GameResponse GetTableCardsToPlayer(string gameName, string playerId)
+        public IActionResult GetTableCardsToPlayer(string gameName, string playerId)
         {
             Game game = _gameService.MoveTableCardsToPlayer(gameName, playerId);
-            return new GameResponse(game, playerId);
+            return Ok(new GameResponse(game, playerId));
         }
 
+        /// <summary>
+        /// Discard player's selected cards
+        /// </summary>
+        /// <param name="gameName">Game Name</param>
+        /// <param name="playerId">Player Id</param>
+        /// <param name="cards">Comma separated string with all cards the user is discarding</param>
+        /// <returns>Current game state</returns>
         [HttpGet("game/{gameName}/{playerId}/discard/{cards}")]
-        public GameResponse GetDiscardPlayerCard(string gameName, string playerId, string cards)
+        public IActionResult GetDiscardPlayerCard(string gameName, string playerId, string cards)
         {
             Game game = _gameService.DiscardPlayerCards(gameName, playerId, cards);
-            return new GameResponse(game, playerId);
+            return Ok(new GameResponse(game, playerId));
         }
 
     }

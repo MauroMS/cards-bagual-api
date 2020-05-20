@@ -6,16 +6,16 @@ namespace ShitheadCardsApi.Models
     {
         public GameResponse(Game game, string playerId)
         {
-            this.Name = game.Name;
-            this.Status = game.Status;
-            this.DeckCount = game.CardsInDeck.Count;
-            this.LastBurnedCard = game.LastBurnedCard;
-            this.BurnedCardsCount = game.BurnedCardsCount;
-            this.TableCards = game.TableCards;
-            this.PlayerNameTurn = game.PlayerNameTurn;
+            Name = game.Name;
+            Status = game.Status;
+            DeckCount = game.CardsInDeck.Count;
+            LastBurnedCard = game.LastBurnedCard;
+            BurnedCardsCount = game.BurnedCardsCount;
+            TableCards = game.TableCards;
+            PlayerNameTurn = game.PlayerNameTurn;
 
-            this.Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
-            this.MySelf = new PlayerMyselfResponse(game.Players.Find(gp => gp.Id == playerId));
+            Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
+            MySelf = new PlayerMyselfResponse(game.Players.Find(gp => gp.Id == playerId));
         }
 
         public string Name { get; set; }
@@ -33,11 +33,11 @@ namespace ShitheadCardsApi.Models
     {
         public PlayerOtherResponse (Player player)
         {
-            this.Name = player.Name;
-            this.HandCount = player.InHandCards.Count;
-            this.DownCount = player.DownCards.Count;
-            this.OpenCards = player.OpenCards;
-            this.Status = player.Status;
+            Name = player.Name;
+            HandCount = player.InHandCards.Count;
+            DownCount = player.DownCards.Count;
+            OpenCards = player.OpenCards;
+            Status = player.Status;
         }
         public string Name { get; set; }
         public int HandCount { get; set; }
