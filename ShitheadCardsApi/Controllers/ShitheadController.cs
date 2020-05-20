@@ -44,27 +44,31 @@ namespace ShitheadCardsApi.Controllers
         }
 
         [HttpGet("game/{gameName}/{playerId}/switch/{openCard}/{handCard}")]
-        public Game GetSwitchPlayerCard(string gameName, string playerId, string openCard, string handCard)
-        {  
-            return _gameService.SwitchPlayerCards(gameName, playerId, openCard, handCard);
+        public GameResponse GetSwitchPlayerCard(string gameName, string playerId, string openCard, string handCard)
+        {
+            Game game = _gameService.SwitchPlayerCards(gameName, playerId, openCard, handCard);
+            return new GameResponse(game, playerId);
         }
 
         [HttpGet("game/{gameName}/{playerId}/start")]
-        public Game GetStartPlayer(string gameName, string playerId)
+        public GameResponse GetStartPlayer(string gameName, string playerId)
         {
-            return _gameService.SetPlayerToStart(gameName, playerId);
+            Game game = _gameService.SetPlayerToStart(gameName, playerId);
+            return new GameResponse(game, playerId);
         }
 
         [HttpGet("game/{gameName}/{playerId}/table")]
-        public Game GetTableCardsToPlayer(string gameName, string playerId)
+        public GameResponse GetTableCardsToPlayer(string gameName, string playerId)
         {
-            return _gameService.MoveTableCardsToPlayer(gameName, playerId);
+            Game game = _gameService.MoveTableCardsToPlayer(gameName, playerId);
+            return new GameResponse(game, playerId);
         }
 
         [HttpGet("game/{gameName}/{playerId}/discard/{cards}")]
-        public Game GetDiscardPlayerCard(string gameName, string playerId, string cards)
+        public GameResponse GetDiscardPlayerCard(string gameName, string playerId, string cards)
         {
-            return _gameService.DiscardPlayerCards(gameName, playerId, cards);
+            Game game = _gameService.DiscardPlayerCards(gameName, playerId, cards);
+            return new GameResponse(game, playerId);
         }
 
     }
