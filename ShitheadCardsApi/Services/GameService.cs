@@ -188,8 +188,8 @@ namespace ShitheadCardsApi
                 if (game == null)
                     throw new GameException("Game not found");
 
-                if (game.Status != StatusEnum.SETUP)
-                    throw new GameException("Game not in setup mode: " + game.Status);
+                if (game.Status != StatusEnum.PLAYING)
+                    throw new GameException("Game not in playing mode: " + game.Status);
 
                 Player player = game.Players.Find(p => p.Id == playerId);
 

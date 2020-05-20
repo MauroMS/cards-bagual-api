@@ -6,6 +6,7 @@ namespace ShitheadCardsApi.Interfaces
     public interface IShitheadService
     {
         List<string> CreateDeck();
-        string chooseFirstTurn(List<Player> players);
+        string ChooseFirstTurn(List<Player> players);
+        string NextPlayerFrom(List<Player> players, string playerId);
     }
 }
