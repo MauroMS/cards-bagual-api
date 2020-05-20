@@ -1,4 +1,5 @@
 ﻿using ShitheadCardsApi.Models;
+using System.Linq;
 
 namespace ShitheadCardsApi.ViewModels
 {
@@ -12,7 +13,7 @@ namespace ShitheadCardsApi.ViewModels
         {
             Name = game.Name;
             Status = game.Status;
-            PlayerId = game.Players.Find(p => p.Name == playerName).Id;
+            PlayerId = game.Players.FirstOrDefault(p => p.Name == playerName)?.Id;
         }
     }
 }

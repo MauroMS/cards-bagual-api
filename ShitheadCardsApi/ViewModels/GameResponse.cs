@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ShitheadCardsApi.Models
 {
@@ -15,7 +16,7 @@ namespace ShitheadCardsApi.Models
             PlayerNameTurn = game.PlayerNameTurn;
 
             Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
-            MySelf = new PlayerMyselfResponse(game.Players.Find(gp => gp.Id == playerId));
+            MySelf = new PlayerMyselfResponse(game.Players.FirstOrDefault(gp => gp.Id == playerId));
         }
 
         public string Name { get; set; }
