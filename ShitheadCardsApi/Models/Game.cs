@@ -20,7 +20,7 @@ namespace ShitheadCardsApi.Models
         public string LastBurnedCard { get; set; }
         public int BurnedCardsCount { get; set; }
         public List<string> CardsInDeck { get; set; }
-        public string PlayerIdTurn { get; set; }
+        public string PlayerNameTurn { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

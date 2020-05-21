@@ -13,7 +13,7 @@ namespace ShitheadCardsApi.Models
             LastBurnedCard = game.LastBurnedCard;
             BurnedCardsCount = game.BurnedCardsCount;
             TableCards = game.TableCards;
-            PlayerNameTurn = game.PlayerIdTurn;
+            PlayerNameTurn = game.PlayerNameTurn;
 
             Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
             MySelf = new PlayerMyselfResponse(game.Players.FirstOrDefault(gp => gp.Id == playerId));

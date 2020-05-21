@@ -56,7 +56,7 @@ namespace ShitheadCardsApi
                 CardsInDeck = cards,
                 BurnedCardsCount = 0,
                 LastBurnedCard = null,
-                PlayerIdTurn = null,
+                PlayerNameTurn = null,
                 TableCards = { },
                 DateCreated = DateTime.Now
             };
@@ -66,10 +66,7 @@ namespace ShitheadCardsApi
 
         public Game JoinGame(Game game, string playerName)
         {
-            if (game.Status != StatusEnum.SETUP)
-            {
-                throw new GameException("Game not in setup mode: " + game.Status);
-            }
+            ValidateGame(game, StatusEnum.SETUP);
 
             var player = game.Players.FirstOrDefault(player1 => player1.Name.Equals(playerName));
 
@@ -117,11 +114,11 @@ namespace ShitheadCardsApi
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
                 ValidatePlayer(player, StatusEnum.SETUP);
-
-                if (player.InHandCards.Remove(handCard))
+                
+                if (! player.InHandCards.Remove(handCard))
                     throw new GameException("Player hand card not found: " + handCard);
 
-                if (player.OpenCards.Remove(openCard))
+                if (! player.OpenCards.Remove(openCard))
                     throw new GameException("Player open card not found: " + openCard);
 
                 player.OpenCards.Add(handCard);
@@ -150,7 +147,7 @@ namespace ShitheadCardsApi
                 if (!game.Players.Any(p => p.Status != StatusEnum.PLAYING))
                 {
                     game.Status = StatusEnum.PLAYING;
-                    game.PlayerIdTurn = _shitheadService.ChooseFirstTurn(game.Players);
+                    game.PlayerNameTurn = _shitheadService.ChooseFirstTurn(game.Players);
                 }
 
                 SaveGame(game);
@@ -169,12 +166,12 @@ namespace ShitheadCardsApi
                 ValidateGame(game, StatusEnum.PLAYING);
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
-                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerIdTurn);
+                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerNameTurn);
 
                 player.InHandCards.AddRange(game.TableCards);
                 game.TableCards.Clear();
 
-                game.PlayerIdTurn = _shitheadService.NextPlayerFrom(game.Players, playerId);
+                game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
 
                 SaveGame(game);
 
@@ -190,17 +187,121 @@ namespace ShitheadCardsApi
             {
                 Game game = GetGame(gameName);
                 ValidateGame(game, StatusEnum.PLAYING);
+                
+                Player player = game.Players.Find(p => p.Id == playerId);
+                ValidatePlayer(player, StatusEnum.PLAYING, playerId);
+                
+                DiscardResult result;
 
-                Player player = game.Players.FirstOrDefault(player => player.Id.Equals(playerId));
-                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerIdTurn);
+                if (cards == "down")
+                {
+                    if (player.InHandCards.Count != 0 || player.OpenCards.Count != 0)
+                        throw new GameException("Player cannot play down card with open or hand cards");
 
+                    var cardToBePlayed = player.DownCards[0];
+                    player.DownCards.RemoveAt(0);
 
+                    result = _shitheadService.EvaluateCardsOnTable(new List<string> { cardToBePlayed }, game.TableCards);
 
+                    if (result == DiscardResult.Refuse)
+                    {
+                        player.InHandCards.Add(cardToBePlayed);
+                        player.InHandCards.AddRange(game.TableCards);
+                        game.TableCards.Clear();
+                        game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                    }
+                    else if (result == DiscardResult.Ok)
+                    {
+                        game.TableCards.Add(cardToBePlayed);
+                        game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                    } 
+                    else if (result == DiscardResult.OkBurned)
+                    {
+                        game.LastBurnedCard = cardToBePlayed;
+                        game.BurnedCardsCount = game.TableCards.Count + 1;
+                        game.TableCards.Clear();
 
-                player.InHandCards.Count();
+                        if (player.DownCards.Count == 0)
+                        {
+                            player.Status = StatusEnum.OUT;
+                            game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                        }
+                    } 
+                }
+                else
+                {
+                    List<string> cardsToBePlayed = cards.Split(",").ToList();
+                    if (cardsToBePlayed.Count > 1 && !cardsToBePlayed.All(c => _shitheadService.SameNumber(c, cardsToBePlayed[0])))
+                        throw new GameException("Player cannot discard multiple cards with different numbers");
 
-                List<string> movedCards = cards.Split(",").ToList();
-                game.TableCards.AddRange(movedCards);
+                    if (player.InHandCards.Count > 0 && ! cardsToBePlayed.All(c => player.InHandCards.Contains(c)))
+                        throw new GameException("Player hand does not contain the cards to discard");
+
+                    if (player.InHandCards.Count == 0 && !cardsToBePlayed.All(c => player.OpenCards.Contains(c)))
+                        throw new GameException("Player open cards does not contain the cards to discard");
+
+                    result = _shitheadService.EvaluateCardsOnTable(cardsToBePlayed, game.TableCards);
+
+                    if (result == DiscardResult.Ok)
+                    {
+                        game.TableCards.AddRange(cardsToBePlayed);
+
+                        if (player.InHandCards.Count > 0)
+                        {
+                            player.InHandCards.RemoveAll(c => cardsToBePlayed.Contains(c));
+                        }
+                        else
+                        {
+                            player.OpenCards.RemoveAll(c => cardsToBePlayed.Contains(c));
+                        }
+
+                        if (player.DownCards.Count == 0 && player.InHandCards.Count == 0 && player.OpenCards.Count == 0)
+                        {
+                            player.Status = StatusEnum.OUT;
+                            game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                        }
+                        else
+                        { 
+                            string cardNumber = _shitheadService.GetCardNumber(cardsToBePlayed[0]);
+
+                            int stepToNextTurn = cardNumber == "8" ? cardsToBePlayed.Count + 1 : 1;
+
+                            game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, stepToNextTurn);
+                        }
+                    }
+                    else if (result == DiscardResult.OkBurned)
+                    {
+                        game.LastBurnedCard = cardsToBePlayed[0];
+                        game.BurnedCardsCount = game.TableCards.Count + cardsToBePlayed.Count;
+                        game.TableCards.Clear();
+
+                        if (player.InHandCards.Count > 0)
+                        {
+                            player.InHandCards.RemoveAll(c => cardsToBePlayed.Contains(c));
+                        }
+                        else
+                        {
+                            player.OpenCards.RemoveAll(c => cardsToBePlayed.Contains(c));
+                        }
+
+                        if (player.DownCards.Count == 0 && player.InHandCards.Count == 0 && player.OpenCards.Count == 0)
+                        {
+                            player.Status = StatusEnum.OUT;
+                            game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                        }
+
+                    }
+
+                    if (game.CardsInDeck.Count > 0 && player.InHandCards.Count < 3)
+                    {
+                        int numToBuy = 3 - player.InHandCards.Count;
+                        player.InHandCards.AddRange(game.CardsInDeck.Take(numToBuy));
+                        game.CardsInDeck.RemoveRange(0, numToBuy);
+                    }
+                }
+
+                SaveGame(game);
+
                 return game;
             }
         }
@@ -251,7 +352,7 @@ namespace ShitheadCardsApi
             return JsonSerializer.Deserialize<Game>(game.GameJson, options);
         }
 
-        private void ValidatePlayer(Player player, StatusEnum expectedStatus, string playerIdTurn = null)
+        private void ValidatePlayer(Player player, StatusEnum expectedStatus, string playerNameTurn = null)
         {
             if (player == null)
                 throw new GameException("Player not found");
@@ -259,7 +360,7 @@ namespace ShitheadCardsApi
             if (player.Status != expectedStatus)
                 throw new GameException($"Player not in {expectedStatus} mode: {player.Status}");
 
-            if (!String.IsNullOrEmpty(playerIdTurn) && player.Name != playerIdTurn)
+            if (!String.IsNullOrEmpty(playerNameTurn) && player.Name != playerNameTurn)
                 throw new GameException("Player not in turn");
         }
 
