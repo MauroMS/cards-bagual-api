@@ -4,6 +4,7 @@ using ShitheadCardsApi.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 
@@ -15,11 +16,12 @@ namespace ShitheadCardsApi
 
 
         private ShitheadDBContext _ctx;
-        private IShitheadService shitheadService;
+        private IShitheadService _shitheadService;
+
         public GameService(ShitheadDBContext ctx, IShitheadService shitheadService)
         {
             _ctx = ctx;
-            this.shitheadService = shitheadService;
+            _shitheadService = shitheadService;
         }
 
         public Game CreateOrJoinGame(string gameName, string playerName)
@@ -32,7 +34,7 @@ namespace ShitheadCardsApi
 
                 if (game == null)
                 {
-                    game = CreateGame(gameName, playerName);
+                    game = CreateGame(gameName);
                 }
 
                 game = JoinGame(game, playerName);
@@ -43,9 +45,9 @@ namespace ShitheadCardsApi
             }
         }
 
-        private Game CreateGame(string gameName, string playerName)
+        private Game CreateGame(string gameName)
         {
-            List<string> cards = shitheadService.CreateDeck();
+            List<string> cards = _shitheadService.CreateDeck();
 
             var game = new Game
             {
@@ -54,8 +56,9 @@ namespace ShitheadCardsApi
                 CardsInDeck = cards,
                 BurnedCardsCount = 0,
                 LastBurnedCard = null,
-                PlayerNameTurn = null,
-                TableCards = { }
+                PlayerIdTurn = null,
+                TableCards = { },
+                DateCreated = DateTime.Now
             };
 
             return game;
@@ -110,20 +113,10 @@ namespace ShitheadCardsApi
             lock (gameLock)
             {
                 Game game = GetGame(gameName);
-
-                if (game == null)
-                    throw new GameException("Game not found");
-
-                if (game.Status != StatusEnum.SETUP)
-                    throw new GameException("Game not in setup mode: " + game.Status);
+                ValidateGame(game, StatusEnum.SETUP);
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
-
-                if (player == null)
-                    throw new GameException("Player not found");
-
-                if (player.Status != StatusEnum.SETUP)
-                    throw new GameException("Player not in setup mode: " + player.Status);
+                ValidatePlayer(player, StatusEnum.SETUP);
 
                 if (player.InHandCards.Remove(handCard))
                     throw new GameException("Player hand card not found: " + handCard);
@@ -147,27 +140,17 @@ namespace ShitheadCardsApi
             lock (gameLock)
             {
                 Game game = GetGame(gameName);
-
-                if (game == null)
-                    throw new GameException("Game not found");
-
-                if (game.Status != StatusEnum.SETUP)
-                    throw new GameException("Game not in setup mode: " + game.Status);
+                ValidateGame(game, StatusEnum.SETUP);
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
-
-                if (player == null)
-                    throw new GameException("Player not found");
-
-                if (player.Status != StatusEnum.SETUP)
-                    throw new GameException("Player not in setup mode: " + player.Status);
+                ValidatePlayer(player, StatusEnum.SETUP);
 
                 player.Status = StatusEnum.PLAYING;
 
                 if (!game.Players.Any(p => p.Status != StatusEnum.PLAYING))
                 {
                     game.Status = StatusEnum.PLAYING;
-                    game.PlayerNameTurn = shitheadService.ChooseFirstTurn(game.Players);
+                    game.PlayerIdTurn = _shitheadService.ChooseFirstTurn(game.Players);
                 }
 
                 SaveGame(game);
@@ -183,28 +166,15 @@ namespace ShitheadCardsApi
             lock (gameLock)
             {
                 Game game = GetGame(gameName);
-
-                if (game == null)
-                    throw new GameException("Game not found");
-
-                if (game.Status != StatusEnum.PLAYING)
-                    throw new GameException("Game not in playing mode: " + game.Status);
+                ValidateGame(game, StatusEnum.PLAYING);
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
-
-                if (player == null)
-                    throw new GameException("Player not found");
-
-                if (player.Status != StatusEnum.PLAYING)
-                    throw new GameException("Player not in playing mode: " + player.Status);
-
-                if (player.Name != game.PlayerNameTurn)
-                    throw new GameException("Player not in turn");
+                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerIdTurn);
 
                 player.InHandCards.AddRange(game.TableCards);
                 game.TableCards.Clear();
 
-                game.PlayerNameTurn = shitheadService.NextPlayerFrom(game.Players, playerId);
+                game.PlayerIdTurn = _shitheadService.NextPlayerFrom(game.Players, playerId);
 
                 SaveGame(game);
 
@@ -212,12 +182,28 @@ namespace ShitheadCardsApi
             }
         }
 
-
         public Game DiscardPlayerCards(string gameName, string playerId, string cards)
         {
-            throw new NotImplementedException();
-        }
+            object gameLock = GetGameLock(gameName);
 
+            lock (gameLock)
+            {
+                Game game = GetGame(gameName);
+                ValidateGame(game, StatusEnum.PLAYING);
+
+                Player player = game.Players.FirstOrDefault(player => player.Id.Equals(playerId));
+                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerIdTurn);
+
+
+
+
+                player.InHandCards.Count();
+
+                List<string> movedCards = cards.Split(",").ToList();
+                game.TableCards.AddRange(movedCards);
+                return game;
+            }
+        }
 
         private static object GetGameLock(string gameName)
         {
@@ -265,5 +251,26 @@ namespace ShitheadCardsApi
             return JsonSerializer.Deserialize<Game>(game.GameJson, options);
         }
 
+        private void ValidatePlayer(Player player, StatusEnum expectedStatus, string playerIdTurn = null)
+        {
+            if (player == null)
+                throw new GameException("Player not found");
+
+            if (player.Status != expectedStatus)
+                throw new GameException($"Player not in {expectedStatus} mode: {player.Status}");
+
+            if (!String.IsNullOrEmpty(playerIdTurn) && player.Name != playerIdTurn)
+                throw new GameException("Player not in turn");
+        }
+
+        private void ValidateGame(Game game, StatusEnum expectedStatus)
+        {
+            if (game == null)
+                throw new GameException("Game not found");
+
+            if (game.Status != expectedStatus)
+                throw new GameException($"Game not in {expectedStatus} mode: {game.Status}");
+
+        }
     }
 }

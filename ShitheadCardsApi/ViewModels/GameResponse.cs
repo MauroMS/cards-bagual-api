@@ -12,7 +12,7 @@ namespace ShitheadCardsApi.Models
             LastBurnedCard = game.LastBurnedCard;
             BurnedCardsCount = game.BurnedCardsCount;
             TableCards = game.TableCards;
-            PlayerNameTurn = game.PlayerNameTurn;
+            PlayerNameTurn = game.PlayerIdTurn;
 
             Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
             MySelf = new PlayerMyselfResponse(game.Players.Find(gp => gp.Id == playerId));
@@ -54,11 +54,11 @@ namespace ShitheadCardsApi.Models
             if (player == null)
                 return;
 
-            this.Name = player.Name;
-            this.HandCards = player.InHandCards;
-            this.DownCount = player.DownCards.Count;
-            this.OpenCards = player.OpenCards;
-            this.Status = player.Status;
+            Name = player.Name;
+            HandCards = player.InHandCards;
+            DownCount = player.DownCards.Count;
+            OpenCards = player.OpenCards;
+            Status = player.Status;
         }
 
         public string Name { get; set; }

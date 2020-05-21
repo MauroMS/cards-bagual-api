@@ -13,7 +13,7 @@ namespace ShitheadCardsApi
 
         public string ChooseFirstTurn(List<Player> players)
         {
-            return players[rng.Next(0, players.Count - 1)].Name;
+            return players[rng.Next(0, players.Count - 1)].Id;
         }
 
         public List<string> CreateDeck()
