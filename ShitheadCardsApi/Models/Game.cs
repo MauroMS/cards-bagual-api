@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ShitheadCardsApi.Models
 {
@@ -20,5 +21,6 @@ namespace ShitheadCardsApi.Models
         public int BurnedCardsCount { get; set; }
         public List<string> CardsInDeck { get; set; }
         public string PlayerNameTurn { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 }

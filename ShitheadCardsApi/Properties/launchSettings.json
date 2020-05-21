@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:59037",
+      "applicationUrl": "http://localhost:5000",
       "sslPort": 0
     }
   },
@@ -12,15 +12,14 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "Shithead",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "ShitheadCardsApi": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "Shithead",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

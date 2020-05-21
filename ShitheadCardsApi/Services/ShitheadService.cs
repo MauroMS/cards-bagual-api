@@ -14,10 +14,32 @@ namespace ShitheadCardsApi
 
         private static int[] numbersValue = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
 
+        public ShitheadService()
+        {
+
+        }
+
         public string ChooseFirstTurn(List<Player> players)
         {
-            //TODO: maybe pick the player with the lowest card 
-            return players[rng.Next(0, players.Count - 1)].Name;
+            KeyValuePair<string, int> starterPlayer = new KeyValuePair<string, int>();
+
+            foreach (var player in players)
+            {
+                var lowestCard = GetPlayerLowestCard(player.InHandCards);
+
+                if (lowestCard == 4)
+                    return player.Name;
+
+                if (starterPlayer.Value == 0 || starterPlayer.Value > lowestCard)
+                    starterPlayer = new KeyValuePair<string, int>(player.Name, lowestCard);
+            }
+
+            return starterPlayer.Key;
+        }
+
+        private int GetPlayerLowestCard(List<string> cards)
+        {
+            return cards.Select(card => GetNumericValue(GetCardNumber(card))).Where(cardValue => cardValue >= 4).Min();
         }
 
         public List<string> CreateDeck()
