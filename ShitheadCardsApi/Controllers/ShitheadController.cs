@@ -42,7 +42,7 @@ namespace ShitheadCardsApi.Controllers
                 Game game = _gameService.CreateOrJoinGame(gameName, playerName);
                 return Ok(new CreateOrJoinGameResponse(game, playerName));
             }
-            catch (Exception ex)
+            catch (GameException ex)
             {
                 return Problem(ex.Message);
             }
@@ -58,8 +58,15 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("game/{gameName}/{playerId}")]
         public IActionResult GetGame(string gameName, string playerId)
         {
-            Game game = _gameService.GetGame(gameName);
-            return Ok(new GameResponse(game, playerId));
+            try
+            {
+                Game game = _gameService.GetGame(gameName);
+                return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         /// <summary>
@@ -73,8 +80,15 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("game/{gameName}/{playerId}/switch/{openCard}/{handCard}")]
         public IActionResult GetSwitchPlayerCard(string gameName, string playerId, string openCard, string handCard)
         {
-            Game game = _gameService.SwitchPlayerCards(gameName, playerId, openCard, handCard);
-            return Ok(new GameResponse(game, playerId));
+            try
+            {
+                Game game = _gameService.SwitchPlayerCards(gameName, playerId, openCard, handCard);
+                return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         /// <summary>
@@ -86,8 +100,15 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("game/{gameName}/{playerId}/start")]
         public IActionResult GetStartPlayer(string gameName, string playerId)
         {
-            Game game = _gameService.SetPlayerToStart(gameName, playerId);
-            return Ok(new GameResponse(game, playerId));
+            try
+            {
+                Game game = _gameService.SetPlayerToStart(gameName, playerId);
+                return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         /// <summary>
@@ -99,8 +120,15 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("game/{gameName}/{playerId}/table")]
         public IActionResult GetTableCardsToPlayer(string gameName, string playerId)
         {
-            Game game = _gameService.MoveTableCardsToPlayer(gameName, playerId);
-            return Ok(new GameResponse(game, playerId));
+            try
+            {
+                Game game = _gameService.MoveTableCardsToPlayer(gameName, playerId);
+                return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         /// <summary>
@@ -113,8 +141,15 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("game/{gameName}/{playerId}/discard/{cards}")]
         public IActionResult GetDiscardPlayerCard(string gameName, string playerId, string cards)
         {
-            Game game = _gameService.DiscardPlayerCards(gameName, playerId, cards);
-            return Ok(new GameResponse(game, playerId));
+            try
+            {
+                Game game = _gameService.DiscardPlayerCards(gameName, playerId, cards);
+                return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
     }
