@@ -146,5 +146,134 @@ namespace ShitheadCardsApi.Moq
             // Assert
             Assert.Equal(nextPlayer, players[0].Name);
         }
+
+
+        // No Cards on the table - Return OK
+        // No Cards on the table + 4 of the same number - Return OkBurned
+        // Lower card than the one on the table - Return Refuse (Other than 2/3/10)
+        // Higher card than the one on the table - Return Ok
+        // Single same card as the one on the table (Not 4 of the same) - Return Ok
+        // Two card the same as the one on the table (3 in total) - Return 
+        // Three card the same as the one on the table (4 in total) - Return OkBurned
+        // Play 2 - Return Ok
+        // Play 3 - Return Ok
+        // Play Higher card when there is a 7 on the table - Return Refuse
+        // Play Lower card when there is a 7 on the table - Return Ok
+        // Play 10
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOk_NoCardsOnTheTable()
+        {
+            // Arrange
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "2A" }, new List<string>());
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.Ok);
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOkBurned_NoCardsOnTheTable4OfTheSame() {
+            // Arrange
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "2A", "2H", "2C", "2S" }, new List<string>());
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.OkBurned);
+
+        }
+
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultRefuse_CardNotValidToPlay() {
+            // Arrange
+
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "7H" }, new List<string>() { "9A" });
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.Refuse);
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOk_CardValidToPlay()
+        {
+            // Arrange
+
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "9H" }, new List<string>() { "9A" });
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.Ok);
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOk_BurnerCardValidToPlayLowerThan10()
+        {
+            // Arrange
+
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "0H" }, new List<string>() { "9A" });
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.OkBurned);
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOk_BurnerCardValidToPlayHigherThan10()
+        {
+            // Arrange
+
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(new List<string>() { "0H" }, new List<string>() { "KA" });
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.OkBurned);
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultRefuse_CardNotValidToPlay()
+        {
+            // Arrange
+
+
+            // Act
+            var test = _sut.EvaluateCardsOnTable(new List<string>() { "9H" }, new List<string>() { "5A" });
+
+            // Assert
+
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultRefuse_CardNotValidToPlay()
+        {
+            // Arrange
+
+
+            // Act
+            var test = _sut.EvaluateCardsOnTable(new List<string>() { "9H" }, new List<string>() { "5A" });
+
+            // Assert
+
+        }
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultRefuse_CardNotValidToPlay()
+        {
+            // Arrange
+
+
+            // Act
+            var test = _sut.EvaluateCardsOnTable(new List<string>() { "9H" }, new List<string>() { "5A" });
+
+            // Assert
+
+        }
     }
 }
