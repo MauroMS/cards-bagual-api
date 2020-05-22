@@ -144,7 +144,7 @@ namespace ShitheadCardsApi
 
                 player.Status = StatusEnum.PLAYING;
 
-                if (!game.Players.Any(p => p.Status != StatusEnum.PLAYING))
+                if (game.Players.Count > 1 && !game.Players.Any(p => p.Status != StatusEnum.PLAYING))
                 {
                     game.Status = StatusEnum.PLAYING;
                     game.PlayerNameTurn = _shitheadService.ChooseFirstTurn(game.Players);
