@@ -1,0 +1,267 @@
+
+
+* {
+  transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53);
+transition-duration: .2s;
+}
+
+body {
+  width:100vw;
+  height:100vh;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77a358+0,156d23+94 */
+  background:
+  radial-gradient(black 15%, transparent 16%) 0 0,
+  radial-gradient(black 15%, transparent 16%) 8px 8px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#41700e;
+  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+margin: 0;
+padding: 0;
+}
+
+.backgroundLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+  radial-gradient(black 15%, transparent 16%) 0 0,
+  radial-gradient(black 15%, transparent 16%) 8px 8px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#41700e;
+  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+-moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+margin: 0;
+padding: 0;
+}
+
+.backgroundLogo2 {
+  color:white;
+  width:100vw;
+  height:100vh;
+  position:fixed;
+  z-index:50;
+  font-size: 35px;
+  font-family: 'Patua One', cursive;
+text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+-webkit-text-stroke: 0.4px #000000;
+-webkit-text-fill-color: #FFFFFF;
+  display: none;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  background:
+  radial-gradient(black 15%, transparent 16%) 0 0,
+  radial-gradient(black 15%, transparent 16%) 8px 8px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#41700e;
+  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+-moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+margin: 0;
+padding: 0;
+}
+
+.backgroundLogo3 {
+  color:white;
+  width:100vw;
+  height:100vh;
+  position:fixed;
+  z-index:50;
+  font-size: 35px;
+  font-family: 'Patua One', cursive;
+text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+-webkit-text-stroke: 0.4px #000000;
+-webkit-text-fill-color: #FFFFFF;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  background:
+  radial-gradient(black 15%, transparent 16%) 0 0,
+  radial-gradient(black 15%, transparent 16%) 8px 8px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#41700e;
+  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+-moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
+margin: 0;
+padding: 0;
+}
+
+.currentPlayer {
+  -webkit-text-fill-color: yellow  !important;
+  font-size: 30px;
+}
+
+.playerOut {
+  -webkit-text-fill-color: #55b8ff  !important;
+  font-size: 30px;
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.starter {
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 15;
+  color:white;
+  position: absolute;
+  top: 80%;
+  left: 60%;
+  background-color: transparent;
+  font-size: 25px;
+  transform: rotate(-4deg);
+  font-family: 'Patua One', cursive;
+text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+-webkit-text-stroke: 0.4px #000000;
+-webkit-text-fill-color: yellow;
+}
+
+.starter:hover {
+  transform: scale(1.2);
+}
+
+.deck {
+  top: 50px;
+  left: 30%;
+}
+
+.burned {
+  top: 50px;
+  left: 50%;
+}
+
+.burnedLastTime {
+  -webkit-text-fill-color: red !important;;
+}
+
+.mesa {
+  top: 40%;
+  left: 30%;
+  transform: rotate(0deg) !important;
+  height: 100px;
+  width: 40%;
+  background-color: #426f0f;
+}
+
+
+.player1 {
+  top: 5%;
+  left: 10%;
+}
+
+.playerCards {
+  position: relative;
+}
+
+.player2 {
+  top: 50%;
+  left: 10%;
+}
+.player3 {
+  top: 5%;
+  left: 80%;
+}
+.player4 {
+  top: 50%;
+  left: 80%;
+}
+
+.cardBlock {  
+  display: inline;
+  position: absolute;
+  z-index: 16;
+  color:white;
+  font-size: 25px;
+
+  transform: rotate(5deg);
+  font-family: 'Patua One', cursive;
+text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+-webkit-text-stroke: 0.4px #000000;
+-webkit-text-fill-color: #FFFFFF;
+}
+
+.mycards {
+  top: 60%;
+  left: 40%;
+}
+
+
+#dealerCards {
+  display: inline;
+  position: absolute;
+  top: 150px;
+  left: 50px;
+}
+
+#playerCards {
+  position: relative;
+  display: inline;
+}
+
+#mesaCards {
+  position: relative;
+  display: inline;
+}
+#deckCards {
+  position: relative;
+  display: inline;
+}
+#burnedCards {
+  position: relative;
+  display: inline;
+}
+
+#title {
+    font-size: xx-large;
+    left: 40%;
+    position: absolute;
+    color: darkorange;
+}
+
+.formContainer {
+  position: absolute;
+  top: 40px;
+  left: 1050px;
+  color: white;
+  width: 570px;
+  display: inline;
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+}
+
+
+IMG.carta {
+  position: absolute;
+  display: inline;
+  z-index:5;
+  transform: rotate(171deg);
+  -webkit-box-shadow: 3px 2px 32px 4px rgba(0,0,0,0.88);
+  width:60px;
+  height:80px;
+}
+
+IMG.selected {
+  border: solid 3px yellow;
+}
+
+H1 {
+  margin: 5px;
+}
