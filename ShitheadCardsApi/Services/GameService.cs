@@ -189,7 +189,7 @@ namespace ShitheadCardsApi
                 ValidateGame(game, StatusEnum.PLAYING);
                 
                 Player player = game.Players.Find(p => p.Id == playerId);
-                ValidatePlayer(player, StatusEnum.PLAYING, playerId);
+                ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerNameTurn);
                 
                 DiscardResult result;
 
@@ -213,7 +213,18 @@ namespace ShitheadCardsApi
                     else if (result == DiscardResult.Ok)
                     {
                         game.TableCards.Add(cardToBePlayed);
-                        game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+
+                        string cardNumber = _shitheadService.GetCardNumber(cardToBePlayed);
+                        int stepToNextTurn = cardNumber == "8" ? 2 : 1;
+
+                        game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, stepToNextTurn);
+
+                        if (player.DownCards.Count == 0)
+                        {
+                            player.Status = StatusEnum.OUT;
+                            if(game.PlayerNameTurn.Equals(player.Name))
+                                game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
+                        }
                     } 
                     else if (result == DiscardResult.OkBurned)
                     {
@@ -299,6 +310,9 @@ namespace ShitheadCardsApi
                         game.CardsInDeck.RemoveRange(0, numToBuy);
                     }
                 }
+
+                if (game.Players.Count() == (game.Players.Count(player => player.Status == StatusEnum.OUT) - 1))
+                    game.Status = StatusEnum.OUT;
 
                 SaveGame(game);
 

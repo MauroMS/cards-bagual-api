@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using ShitheadCardsApi.Interfaces;
 using ShitheadCardsApi.Models;
 using ShitheadCardsApi.ViewModels;
-using System;
+using Microsoft.AspNetCore.Http;
+
 
 namespace ShitheadCardsApi.Controllers
 {
@@ -44,7 +45,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
@@ -65,7 +66,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
@@ -87,7 +88,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
@@ -107,7 +108,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
@@ -127,7 +128,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
@@ -148,7 +149,7 @@ namespace ShitheadCardsApi.Controllers
             }
             catch (GameException ex)
             {
-                return Problem(ex.Message);
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
             }
         }
 
