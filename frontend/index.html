@@ -101,7 +101,7 @@ $(document).ready(function() {
 
       if (lastBurnedCard != null) {
         if (document.getElementById("burnedCards").innerHTML.indexOf(lastBurnedCard) == -1) {
-            card = `<img class="carta" style="left: 20px" src="${getImageUrl(lastBurnedCard)}"/>`;
+            card = `<img class="carta" draggable="false" style="left: 20px" src="${getImageUrl(lastBurnedCard)}"/>`;
             document.getElementById("burnedCards").innerHTML = card;
             $("#burned").addClass("burnedLastTime"); 
         } else {
@@ -143,7 +143,7 @@ $(document).ready(function() {
             for (var i = 0; i < player.openCards.length; i++) {
                 let posCard = (i * 20 + 20);
               
-                card = `<img class="carta" style="left: ${posCard}px" src="${getImageUrl(player.openCards[i])}" />`;
+                card = `<img class="carta" draggable="false" style="left: ${posCard}px" src="${getImageUrl(player.openCards[i])}" />`;
                 document.getElementById("p" + playerIndex + "CardsUp").innerHTML += card;
             }
         }
@@ -179,7 +179,7 @@ $(document).ready(function() {
             for (var i = 0; i < tableCards.length; i++) {
                 let posCard = (i * 20 + 20);
               
-                card = `<img class="carta" style="left: ${posCard}px" src="${getImageUrl(tableCards[i])}" />`;
+                card = `<img class="carta" draggable="false" style="left: ${posCard}px" src="${getImageUrl(tableCards[i])}" />`;
                 tableHtml += card;
             }
             document.getElementById("mesaCards").innerHTML = tableHtml;
@@ -472,6 +472,27 @@ $(document).ready(function() {
  
     }
 
+   $(document).on("dragstart", "img.mycarta", function (ev) {
+       // debugger;
+   //     ev.preventDefault();
+
+        var dragCard = $(ev.currentTarget);
+
+        var parentId = dragCard.parent().attr('id');
+
+        if (dragCard.hasClass("selected") || $("IMG.selected").length > 0) { 
+          return;
+        }  
+    
+        var canPlayUp = ($("#myCards IMG").length == 0);
+        var canPlayDown = canPlayUp && ($("#myCardsUp IMG").length == 0);
+
+        if (myTurn && (parentId  == "myCards" || (canPlayUp && parentId  == "myCardsUp") || (canPlayDown && parentId  == "myCardsDown"))) {
+            selectCardForMesa(dragCard, parentId);
+        }
+
+   });
+
 
     $('#mesa').on('dragover', false).on('drop', function (ev) {
         ev.preventDefault();
@@ -487,7 +508,7 @@ $(document).ready(function() {
         var elemParent = selectedElem.parent().attr("id");  
 
         if (selectedElem.length == 0) {
-           alert("click on a card to be discarded to select it before dragging it, you moron!");
+          
            return;
         }
 
@@ -1142,7 +1163,7 @@ $(document).ready(function() {
     <div class="cardBlock deck">
       Deck (<span id="deckCount" title="Number of cards left on the deck">-</span>)
       <div id="deckCards">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
     </div>
 
@@ -1180,28 +1201,23 @@ $(document).ready(function() {
     <div class="cardBlock player1 hidden" id="p1">
       <span id="p1name">Player 1</span>(<span id="p1Count" title="number of cards on players hand">-</span>)
       <div id="p1CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
       <div id="p1CardsUp" class="playerCards" style="top:40px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
     </div>
 
     <div class="cardBlock player2 hidden" id="p2">
       <span id="p2name">Player 2</span>(<span id="p2Count" title="number of cards on players hand">-</span>)
       <div id="p2CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
       <div id="p2CardsUp" class="playerCards" style="top:40px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+
       </div>
     </div>
 
@@ -1209,28 +1225,23 @@ $(document).ready(function() {
     <div class="cardBlock player3 hidden" id="p3">
       <span id="p3name">Player 3</span>(<span id="p3Count" title="number of cards on players hand">-</span>)
       <div id="p3CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
       <div id="p3CardsUp" class="playerCards" style="top:40px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
     </div>
 
     <div class="hidden cardBlock player4" id="p4" >
       <span id="p4name">Player 4</span>(<span id="p4Count" title="number of cards on players hand">-</span>)
       <div id="p4CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
       </div>
       <div id="p4CardsUp" class="playerCards" style="top:40px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
+       
       </div>
     </div>
 
