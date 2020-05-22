@@ -115,14 +115,14 @@ namespace ShitheadCardsApi
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
                 ValidatePlayer(player, StatusEnum.SETUP);
                 
-                if (! player.InHandCards.Remove(handCard))
+                if (! player.InHandCards.Contains(handCard))
                     throw new GameException("Player hand card not found: " + handCard);
 
-                if (! player.OpenCards.Remove(openCard))
+                if (! player.OpenCards.Contains(openCard))
                     throw new GameException("Player open card not found: " + openCard);
 
-                player.OpenCards.Add(handCard);
-                player.InHandCards.Add(openCard);
+                player.OpenCards[player.OpenCards.IndexOf(openCard)] = handCard;
+                player.InHandCards[player.InHandCards.IndexOf(handCard)] = openCard;
 
                 SaveGame(game);
 
@@ -214,7 +214,7 @@ namespace ShitheadCardsApi
                     {
                         game.TableCards.Add(cardToBePlayed);
 
-                        string cardNumber = _shitheadService.GetCardNumber(cardToBePlayed);
+                        string cardNumber = ShitheadService.GetCardNumber(cardToBePlayed);
                         int stepToNextTurn = cardNumber == "8" ? 2 : 1;
 
                         game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, stepToNextTurn);
@@ -229,7 +229,7 @@ namespace ShitheadCardsApi
                     else if (result == DiscardResult.OkBurned)
                     {
                         game.LastBurnedCard = cardToBePlayed;
-                        game.BurnedCardsCount = game.TableCards.Count + 1;
+                        game.BurnedCardsCount += game.TableCards.Count + 1;
                         game.TableCards.Clear();
 
                         if (player.DownCards.Count == 0)
@@ -273,7 +273,7 @@ namespace ShitheadCardsApi
                         }
                         else
                         { 
-                            string cardNumber = _shitheadService.GetCardNumber(cardsToBePlayed[0]);
+                            string cardNumber = ShitheadService.GetCardNumber(cardsToBePlayed[0]);
 
                             int stepToNextTurn = cardNumber == "8" ? cardsToBePlayed.Count + 1 : 1;
 
@@ -283,7 +283,7 @@ namespace ShitheadCardsApi
                     else if (result == DiscardResult.OkBurned)
                     {
                         game.LastBurnedCard = cardsToBePlayed[0];
-                        game.BurnedCardsCount = game.TableCards.Count + cardsToBePlayed.Count;
+                        game.BurnedCardsCount += game.TableCards.Count + cardsToBePlayed.Count;
                         game.TableCards.Clear();
 
                         if (player.InHandCards.Count > 0)

@@ -62,6 +62,8 @@ namespace ShitheadCardsApi.Controllers
             try
             {
                 Game game = _gameService.GetGame(gameName);
+                if (game == null)
+                    throw new GameException("Game not found");
                 return Ok(new GameResponse(game, playerId));
             }
             catch (GameException ex)

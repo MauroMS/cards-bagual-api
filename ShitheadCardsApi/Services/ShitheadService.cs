@@ -60,9 +60,11 @@ namespace ShitheadCardsApi
 
         public DiscardResult EvaluateCardsOnTable(List<string> cardsToBePlayed, List<string> tableCards)
         {
-            if (tableCards.Count == 0)
+            string lastTableCardNotThree = tableCards.FindLast(tc => GetCardNumber(tc) != "3");
+
+            if (tableCards.Count == 0 || lastTableCardNotThree == null)
             {
-                if (cardsToBePlayed.Count == 4)
+                if ((cardsToBePlayed.Count == 4) || (GetCardNumber(cardsToBePlayed[0]) == "0"))
                 {
                     return DiscardResult.OkBurned;
                 }
@@ -71,7 +73,7 @@ namespace ShitheadCardsApi
 
             string cardNumber = GetCardNumber(cardsToBePlayed[0]);
 
-            string lastTableCardNumber = GetCardNumber(tableCards.FindLast(tc => GetCardNumber(tc) != "3"));
+            string lastTableCardNumber = GetCardNumber(lastTableCardNotThree);
 
             bool acceptDiscard = CanCardGoOn(cardNumber, lastTableCardNumber);
 
@@ -121,28 +123,33 @@ namespace ShitheadCardsApi
             return toPut > toAccept;
         }
 
-        private int GetNumericValue(string cardNumber)
+        public static int GetNumericValue(string cardNumber)
         {
             return numbersValue[Array.IndexOf(numbers, cardNumber)];
         }
 
-        public string GetCardNumber(string card)
+        public static string GetCardNumber(string card)
         {
             return card.Substring(0,1);
         }
 
         public string NextPlayerFrom(List<Player> players, string playerId, int step)
         {
-            List<Player> playersPlaying = players.FindAll(p => p.Status == StatusEnum.PLAYING);
+            int numPlayersPlaying = players.FindAll(p => p.Status == StatusEnum.PLAYING).Count;
 
-            int playerIdIndex = playersPlaying.FindIndex(p => p.Id == playerId);
+            int playerIdIndex = players.FindIndex(p => p.Id == playerId);
 
-            if (step >= playersPlaying.Count)
-                return playersPlaying[playerIdIndex].Name;
+            if (step >= numPlayersPlaying && players[playerIdIndex].Status == StatusEnum.PLAYING)
+                return players[playerIdIndex].Name;
 
-            int nextTurnIndex = (playerIdIndex + step) % playersPlaying.Count;
+            int nextTurnIndex = -1;
+            do
+            {
+                nextTurnIndex = (playerIdIndex + step++) % players.Count;
+            }
+            while (players[nextTurnIndex].Status != StatusEnum.PLAYING);
 
-            return playersPlaying[nextTurnIndex].Name;
+            return players[nextTurnIndex].Name;
             
         }
 

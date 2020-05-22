@@ -19,6 +19,7 @@
     },
     "ShitheadCardsApi": {
       "commandName": "Project",
+      "launchBrowser": true,
       "launchUrl": "Shithead",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

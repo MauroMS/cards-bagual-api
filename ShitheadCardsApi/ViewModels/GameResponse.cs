@@ -56,7 +56,7 @@ namespace ShitheadCardsApi.Models
                 return;
 
             Name = player.Name;
-            HandCards = player.InHandCards;
+            HandCards = player.InHandCards.OrderBy(card => ShitheadService.GetNumericValue(ShitheadService.GetCardNumber(card))).ToList();
             DownCount = player.DownCards.Count;
             OpenCards = player.OpenCards;
             Status = player.Status;
