@@ -504,6 +504,7 @@ $(document).ready(function() {
                 }
 
                 response.json().then(function(data) {
+                   $("IMG.selected").removeClass("selected");
                    refreshGame(data);
                   });
             });  
@@ -517,8 +518,9 @@ $(document).ready(function() {
                 }
 
                 response.json().then(function(data) {
+                   $("IMG.selected").removeClass("selected");
                    refreshGame(data);
-                  });
+                });
             });  
         }
     });

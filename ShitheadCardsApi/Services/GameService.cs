@@ -307,11 +307,11 @@ namespace ShitheadCardsApi
                     {
                         int numToBuy = 3 - player.InHandCards.Count;
                         player.InHandCards.AddRange(game.CardsInDeck.Take(numToBuy));
-                        game.CardsInDeck.RemoveRange(0, numToBuy);
+                        game.CardsInDeck.RemoveRange(0, Math.Min(numToBuy, game.CardsInDeck.Count));
                     }
                 }
 
-                if (game.Players.Count() == (game.Players.Count(player => player.Status == StatusEnum.OUT) - 1))
+                if (game.Players.Count() -1 == (game.Players.Count(player => player.Status == StatusEnum.OUT)))
                     game.Status = StatusEnum.OUT;
 
                 SaveGame(game);
