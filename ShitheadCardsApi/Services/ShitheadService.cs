@@ -143,11 +143,12 @@ namespace ShitheadCardsApi
                 return players[playerIdIndex].Name;
 
             int nextTurnIndex = -1;
+            int cnt = 1;
             do
             {
-                nextTurnIndex = (playerIdIndex + step++) % players.Count;
+                nextTurnIndex = (playerIdIndex + cnt++) % players.Count;
             }
-            while (players[nextTurnIndex].Status != StatusEnum.PLAYING);
+            while (players[nextTurnIndex].Status != StatusEnum.PLAYING || --step > 0);
 
             return players[nextTurnIndex].Name;
             

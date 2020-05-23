@@ -25,7 +25,7 @@ namespace ShitheadCardsApi.Moq
                 players.Add(new Player()
                 {
                     Id = "2423423fsdf",
-                    Name = "Juanito",
+                    Name = "Juanito0",
                     InHandCards = new List<string>() { "2H", "7D", "5S" },
                     Status = StatusEnum.PLAYING
                 });
@@ -34,7 +34,7 @@ namespace ShitheadCardsApi.Moq
                 players.Add(new Player()
                 {
                     Id = "4534g34g",
-                    Name = "Igor",
+                    Name = "Igor1",
                     InHandCards = new List<string>() { "AH", "9D", "7S" },
                     Status = StatusEnum.PLAYING
                 });
@@ -43,7 +43,7 @@ namespace ShitheadCardsApi.Moq
                 players.Add(new Player()
                 {
                     Id = "asdfsdf34",
-                    Name = "Bob",
+                    Name = "Bob2",
                     InHandCards = new List<string>() { "KH", "JD", "4S" },
                     Status = StatusEnum.PLAYING
                 });
@@ -52,7 +52,7 @@ namespace ShitheadCardsApi.Moq
                 players.Add(new Player()
                 {
                     Id = "43t5y4y ",
-                    Name = "Joao",
+                    Name = "Joao3",
                     InHandCards = new List<string>() { "3H", "6D", "8S" },
                     Status = StatusEnum.PLAYING
                 });
@@ -61,7 +61,7 @@ namespace ShitheadCardsApi.Moq
                 players.Add(new Player()
                 {
                     Id = "34645g4hy65u",
-                    Name = "Marquito",
+                    Name = "Marquito4",
                     InHandCards = new List<string>() { "JH", "4D", "9S" },
                     Status = StatusEnum.PLAYING
                 });
@@ -79,7 +79,7 @@ namespace ShitheadCardsApi.Moq
             var firstPlayer = _sut.ChooseFirstTurn(players);
 
             // Assert
-            Assert.Equal("Bob", firstPlayer);
+            Assert.Equal("Bob2", firstPlayer);
 
         }
 
@@ -105,7 +105,35 @@ namespace ShitheadCardsApi.Moq
             var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 1);
 
             // Assert
-            Assert.Equal(nextPlayer, players[1].Name);
+            Assert.Equal(players[1].Name, nextPlayer);
+        }
+
+        [Fact]
+        public void NextPlayerFrom_ShouldConsiderPlayerOutWithTwoPlayers()
+        {
+            // Arrange
+            players = CreatePlayersListMock(2);
+            players[0].Status = StatusEnum.OUT;
+
+            // Act
+            var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 1);
+
+            // Assert
+            Assert.Equal(players[1].Name, nextPlayer);
+        }
+
+        [Fact]
+        public void NextPlayerFrom_ShouldConsiderPlayerOutWithThrePlayers()
+        {
+            // Arrange
+            players = CreatePlayersListMock(3);
+            players[1].Status = StatusEnum.OUT;
+
+            // Act
+            var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 1);
+
+            // Assert
+            Assert.Equal(players[2].Name, nextPlayer);
         }
 
         [Fact]
@@ -118,20 +146,21 @@ namespace ShitheadCardsApi.Moq
             var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 2);
 
             // Assert
-            Assert.Equal(nextPlayer, players[2].Name);
+            Assert.Equal(players[2].Name, nextPlayer);
         }
 
         [Fact]
-        public void NextPlayerFrom_ShouldReturnNextPlayer_Skip2Players()
+        public void NextPlayerFrom_ShouldReturnNextPlayer_Skip2PlayersSkippingOut()
         {
             // Arrange
             players = CreatePlayersListMock(5);
+            players[2].Status = StatusEnum.OUT;
 
             // Act
             var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 3);
 
             // Assert
-            Assert.Equal(nextPlayer, players[3].Name);
+            Assert.Equal(players[4].Name, nextPlayer);
         }
 
         [Fact]
@@ -144,9 +173,24 @@ namespace ShitheadCardsApi.Moq
             var nextPlayer = _sut.NextPlayerFrom(players, players[0].Id, 4);
 
             // Assert
-            Assert.Equal(nextPlayer, players[0].Name);
+            Assert.Equal(players[0].Name, nextPlayer);
         }
 
+
+        [Fact]
+        public void NextPlayerFrom_ShouldConsiderPlayersOutWhenSkippingPlayers()
+        {
+            // Arrange
+            players = CreatePlayersListMock(5);
+            players[4].Status = StatusEnum.OUT;
+
+
+            // Act
+            var nextPlayer = _sut.NextPlayerFrom(players, players[3].Id, 2);
+
+            // Assert
+            Assert.Equal(players[1].Name, nextPlayer);
+        }
 
         [Fact]
         public void EvaluateCardsOnTable_ShouldReturnResultOk_NoCardsOnTheTable()
@@ -334,6 +378,21 @@ namespace ShitheadCardsApi.Moq
             // Arrange
             List<string> cardsToBePlayed = new List<string>() { "3A" };
             List<string> tableCards = new List<string>() { "9A", "9C" };
+
+            // Act
+            var discardResult = _sut.EvaluateCardsOnTable(cardsToBePlayed, tableCards);
+
+            // Assert
+            Assert.True(discardResult == DiscardResult.Ok);
+        }
+
+
+        [Fact]
+        public void EvaluateCardsOnTable_ShouldReturnResultOk_ValidMirrorCardOnTable()
+        {
+            // Arrange
+            List<string> cardsToBePlayed = new List<string>() { "5A" };
+            List<string> tableCards = new List<string>() { "7A", "3A" };
 
             // Act
             var discardResult = _sut.EvaluateCardsOnTable(cardsToBePlayed, tableCards);
