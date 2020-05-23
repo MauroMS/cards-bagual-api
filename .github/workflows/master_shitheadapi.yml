@@ -23,6 +23,12 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
+    - task: DotNetCoreCLI@2
+      inputs:
+      command: test
+      projects: '**/*Tests/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
