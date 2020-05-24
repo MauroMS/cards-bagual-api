@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-  <title>Xíti Rédi</title>
+  <title>ShitHead Multiplayer Online</title>
   <link rel="stylesheet" type="text/css" href="./xitiredi_files/style.css">
   <link href="./xitiredi_files/font.css" rel="stylesheet">
 
@@ -24,7 +24,7 @@ $(document).ready(function() {
         }
     }
 
-    let baseURL = 'http://localhost:5000/Shithead';
+    let baseURL = 'https://shitheadapi.azurewebsites.net/Shithead';//http://localhost:5000/Shithead';
 
     let imageURL = 'https://deckofcardsapi.com/static/img/XX.png';
 
@@ -262,13 +262,27 @@ $(document).ready(function() {
     }
 
     function createGameAndPlayer(){
+        fetch(baseURL + '/game/' + gameName + '/player/' + playerName).then(function(response) {
 
-        $.get(baseURL + '/game/' + gameName + '/player/' + playerName, function(shAPI) {
-            playerId = shAPI.playerId;
-            console.log("From SHAPI: me = " + playerId);
-            refreshInterval();
-            refresher = setInterval(refreshInterval, 4000);
-        });
+            if (response.status != 200) {
+                if (response.status == 422) {
+                  response.text().then(function(rb) {
+                      alert("Cannot join game: " + rb); 
+                  }); 
+                } else {
+                  writeResponseError(response);
+                }
+                return;
+            }
+
+            response.json().then(function(shAPI) {
+              playerId = shAPI.playerId;
+              console.log("From SHAPI: me = " + playerId);
+              document.getElementById("gameName").innerHTML += shAPI.name;
+              refreshInterval();
+              refresher = setInterval(refreshInterval, 4000);
+            });
+        });  
     }
 
     function getCardValueAndSuit(imgCartaSrc) {
@@ -415,6 +429,11 @@ $(document).ready(function() {
          fetch(baseURL + '/game/' + gameName + '/' + playerId + "/start");
     });
 
+
+   $('#discard').click(function() {
+         discardSelectedCard();
+    });
+
    function writeResponseValidationError(response) {
       errorCount++;
 
@@ -497,7 +516,11 @@ $(document).ready(function() {
     $('#mesa').on('dragover', false).on('drop', function (ev) {
         ev.preventDefault();
 
-        if (!myTurn || startMode) {
+        discardSelectedCard();
+    });
+
+    function discardSelectedCard(){
+      if (!myTurn || startMode) {
           return;
         }
 
@@ -544,7 +567,7 @@ $(document).ready(function() {
                 });
             });  
         }
-    });
+    }
 
     //  init alles
     createGameAndPlayer();
@@ -560,7 +583,8 @@ $(document).ready(function() {
       
     
 <body id="body">
-    <div id="title"> Brain Inc. Shithead </div>
+    <div id="title"> <a href="https://github.com/MauroMS/shithead-cards" target=”_blank”>Shithead Multiplayer</a> </div>
+    <div id="gameName">Game name: </div>
     <div style="width: 100vw; height: 100vh; position: absolute; z-index: 30; display: none;" class="backgroundLogo" id="id">
         <!--?xml version="1.0" encoding="utf-8"?-->
         <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -1155,9 +1179,13 @@ $(document).ready(function() {
 
     </div>
 
-
     <div id="starter" class="starter">
         <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up">Start</div>
+    </div>
+
+
+    <div id="discard" class="discard">
+        <div style="z-index:31;" id="discardSelected" title="Clic here to throw the selected card(s)">Throw</div>
     </div>
 
     <div class="cardBlock deck">
