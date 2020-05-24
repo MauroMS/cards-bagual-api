@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <title>ShitHead Multiplayer Online</title>
-  <link rel="stylesheet" type="text/css" href="./xitiredi_files/style.css">
-  <link href="./xitiredi_files/font.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="./xitiredi_files/style.css"/>
+  <link href="./xitiredi_files/font.css" rel="stylesheet"/>
 
   <script src="./xitiredi_files/jquery.min.js"></script>
 
@@ -183,6 +189,7 @@ $(document).ready(function() {
                 tableHtml += card;
             }
             document.getElementById("mesaCards").innerHTML = tableHtml;
+            document.getElementById("mesaCardsCount").innerHTML = tableCards.length;
         }
 
     }
