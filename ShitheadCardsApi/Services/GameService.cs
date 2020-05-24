@@ -78,7 +78,7 @@ namespace ShitheadCardsApi
                 game.DateCreated = DateTime.Now;
             }
             else
-            { 
+            {
                 ValidateGame(game, StatusEnum.SETUP);
             }
             var player = game.Players.FirstOrDefault(player1 => player1.Name.Equals(playerName));
@@ -107,7 +107,6 @@ namespace ShitheadCardsApi
             return game;
         }
 
-
         public Game GetGame(string name)
         {
             GameDbModel gameDbModel = _ctx.Find<GameDbModel>(name);
@@ -127,11 +126,11 @@ namespace ShitheadCardsApi
 
                 Player player = game.Players.FirstOrDefault(p => p.Id == playerId);
                 ValidatePlayer(player, StatusEnum.SETUP);
-                
-                if (! player.InHandCards.Contains(handCard))
+
+                if (!player.InHandCards.Contains(handCard))
                     throw new GameException("Player hand card not found: " + handCard);
 
-                if (! player.OpenCards.Contains(openCard))
+                if (!player.OpenCards.Contains(openCard))
                     throw new GameException("Player open card not found: " + openCard);
 
                 player.OpenCards[player.OpenCards.IndexOf(openCard)] = handCard;
@@ -200,10 +199,10 @@ namespace ShitheadCardsApi
             {
                 Game game = GetGame(gameName);
                 ValidateGame(game, StatusEnum.PLAYING);
-                
+
                 Player player = game.Players.Find(p => p.Id == playerId);
                 ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerNameTurn);
-                
+
                 DiscardResult result;
 
                 if (cards == "down")
@@ -235,10 +234,10 @@ namespace ShitheadCardsApi
                         if (player.DownCards.Count == 0)
                         {
                             player.Status = StatusEnum.OUT;
-                            if(game.PlayerNameTurn.Equals(player.Name))
+                            if (game.PlayerNameTurn.Equals(player.Name))
                                 game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
                         }
-                    } 
+                    }
                     else if (result == DiscardResult.OkBurned)
                     {
                         game.LastBurnedCard = cardToBePlayed;
@@ -250,7 +249,7 @@ namespace ShitheadCardsApi
                             player.Status = StatusEnum.OUT;
                             game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
                         }
-                    } 
+                    }
                 }
                 else
                 {
@@ -258,7 +257,7 @@ namespace ShitheadCardsApi
                     if (cardsToBePlayed.Count > 1 && !cardsToBePlayed.All(c => _shitheadService.SameNumber(c, cardsToBePlayed[0])))
                         throw new GameException("Player cannot discard multiple cards with different numbers");
 
-                    if (player.InHandCards.Count > 0 && ! cardsToBePlayed.All(c => player.InHandCards.Contains(c)))
+                    if (player.InHandCards.Count > 0 && !cardsToBePlayed.All(c => player.InHandCards.Contains(c)))
                         throw new GameException("Player hand does not contain the cards to discard");
 
                     if (player.InHandCards.Count == 0 && !cardsToBePlayed.All(c => player.OpenCards.Contains(c)))
@@ -285,7 +284,7 @@ namespace ShitheadCardsApi
                             game.PlayerNameTurn = _shitheadService.NextPlayerFrom(game.Players, playerId, 1);
                         }
                         else
-                        { 
+                        {
                             string cardNumber = ShitheadService.GetCardNumber(cardsToBePlayed[0]);
 
                             int stepToNextTurn = cardNumber == "8" ? cardsToBePlayed.Count + 1 : 1;
@@ -324,7 +323,7 @@ namespace ShitheadCardsApi
                     }
                 }
 
-                if (game.Players.Count() -1 == (game.Players.Count(player => player.Status == StatusEnum.OUT)))
+                if (game.Players.Count() - 1 == (game.Players.Count(player => player.Status == StatusEnum.OUT)))
                     game.Status = StatusEnum.OUT;
 
                 SaveGame(game);
