@@ -5,8 +5,9 @@ namespace ShitheadCardsApi.DataContext
 {
     public class ShitheadDBContext : DbContext
     {
-        public ShitheadDBContext(DbContextOptions<ShitheadDBContext> options)
-    : base(options) { }
+        public ShitheadDBContext(DbContextOptions<ShitheadDBContext> options)  : base(options) { }
+
+        public ShitheadDBContext() : base() { }
 
         public DbSet<GameDbModel> ShitheadGames { get; set; }
     }

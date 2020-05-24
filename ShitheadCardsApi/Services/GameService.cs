@@ -14,7 +14,6 @@ namespace ShitheadCardsApi
     {
         private static ConcurrentDictionary<string, object> locker = new ConcurrentDictionary<string, object>();
 
-
         private ShitheadDBContext _ctx;
         private IShitheadService _shitheadService;
 
@@ -45,7 +44,7 @@ namespace ShitheadCardsApi
             }
         }
 
-        private Game CreateGame(string gameName)
+        public Game CreateGame(string gameName)
         {
             List<string> cards = _shitheadService.CreateDeck();
 
@@ -66,8 +65,22 @@ namespace ShitheadCardsApi
 
         public Game JoinGame(Game game, string playerName)
         {
-            ValidateGame(game, StatusEnum.SETUP);
-
+            if (game.Status == StatusEnum.OUT || game.DateCreated > DateTime.Now.AddHours(-2))
+            {
+                //reset game if already finished
+                List<string> cards = _shitheadService.CreateDeck();
+                game.Status = StatusEnum.SETUP;
+                game.CardsInDeck = cards;
+                game.BurnedCardsCount = 0;
+                game.LastBurnedCard = null;
+                game.PlayerNameTurn = null;
+                game.TableCards = new List<string>();
+                game.DateCreated = DateTime.Now;
+            }
+            else
+            { 
+                ValidateGame(game, StatusEnum.SETUP);
+            }
             var player = game.Players.FirstOrDefault(player1 => player1.Name.Equals(playerName));
 
             if (player == null)
