@@ -176,7 +176,6 @@ namespace ShitheadCardsApi.Moq
             Assert.Equal(players[0].Name, nextPlayer);
         }
 
-
         [Fact]
         public void NextPlayerFrom_ShouldConsiderPlayersOutWhenSkippingPlayers()
         {
@@ -385,7 +384,6 @@ namespace ShitheadCardsApi.Moq
             // Assert
             Assert.True(discardResult == DiscardResult.Ok);
         }
-
 
         [Fact]
         public void EvaluateCardsOnTable_ShouldReturnResultOk_ValidMirrorCardOnTable()

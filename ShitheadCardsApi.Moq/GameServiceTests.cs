@@ -1,10 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ShitheadCardsApi.DataContext;
 using ShitheadCardsApi.Interfaces;
 using ShitheadCardsApi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace ShitheadCardsApi.Moq
@@ -13,15 +14,19 @@ namespace ShitheadCardsApi.Moq
     {
         //system under test
         private readonly GameService _sut;
+        private readonly GameService _sutMock;
         private List<Player> players;
-        private Mock<IShitheadService> shitheadService;
-        private Mock<ShitheadDBContext> shitheadDbContext;
+        private Mock<ShitheadService> shitheadService;
+        private Mock<IShitheadService> shitheadServiceMoq;
+        private ShitheadDBContext dbContext;
 
         public GameServiceTests()
         {
-            shitheadDbContext = new Mock<ShitheadDBContext>();
-            shitheadService = new Mock<IShitheadService>();
-            _sut = new GameService(shitheadDbContext.Object, shitheadService.Object);
+            shitheadService = new Mock<ShitheadService>();
+            shitheadServiceMoq = new Mock<IShitheadService>();
+            CreateNewDb();
+            _sut = new GameService(dbContext, shitheadService.Object);
+            _sutMock = new GameService(dbContext, shitheadServiceMoq.Object);
         }
 
         private List<Player> CreatePlayersListMock(int playersNeeded)
@@ -83,12 +88,28 @@ namespace ShitheadCardsApi.Moq
             var gameName = "Game name";
 
             // Act
-            var game = _sut.CreateGame(gameName);
+            var game = _sutMock.CreateGame(gameName);
 
             // Assert
             Assert.Equal(gameName, game.Name);
             Assert.Equal(StatusEnum.SETUP, game.Status);
-            shitheadService.Verify(mock => mock.CreateDeck(), Times.Once());
+            shitheadServiceMoq.Verify(mock => mock.CreateDeck(), Times.Once());
+        }
+
+        [Fact]
+        public void CreateOrJoinGame_ShouldReturnCorrectAmountOfCardsInDeck()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = _sut.CreateOrJoinGame(gameName, "Locomia");
+            game = _sut.CreateOrJoinGame(gameName, "Locomia1");
+            game = _sut.CreateOrJoinGame(gameName, "Locomia2");
+
+            // Act
+            game = _sut.GetGame(gameName);
+
+            // Assert
+            Assert.Equal(game.CardsInDeck.Count, (52 - (9 * game.Players.Count)));
         }
 
         [Fact]
@@ -96,61 +117,87 @@ namespace ShitheadCardsApi.Moq
         {
             // Arrange
             var gameName = "Game name";
-            var game = _sut.CreateGame(gameName);
-            game.Players.AddRange(CreatePlayersListMock(2));
-            game.TableCards.AddRange(new List<string>() { "2A", "3A", "4A", "5H", "7H", "0A", "5A", "8H", "9H", "3H", "7H", "3S", "4S", "7S", "9S" }); // 15 Cards on the table
+            var game = new Game()
+            {
+                BurnedCardsCount = 0,
+                CardsInDeck = new List<string>() { "2A", "3H", "7S", "8S" },
+                DateCreated = DateTime.Now,
+                Name = gameName,
+                LastBurnedCard = "6S",
+                Status = StatusEnum.PLAYING,
+                TableCards = new List<string>() { "2A", "3A", "4A", "5H", "7H", "0A", "5A", "8H", "9H", "3H", "7H", "3S", "4S", "7S", "9S" }, // 15 Cards on the table
+                Players = CreatePlayersListMock(2)
+            };
 
-            //https://www.jankowskimichal.pl/en/2016/01/mocking-dbcontext-and-dbset-with-moq/
-            //https://stackoverflow.com/questions/25960192/mocking-ef-dbcontext-with-moq
+            game.PlayerNameTurn = game.Players[0].Name;
 
-            shitheadDbContext.Object.Add(game);
-            shitheadDbContext.Object.SaveChanges();
-            var a = shitheadDbContext.Object.Find<GameDbModel>(gameName);
+            var gameDbModel = new GameDbModel()
+            {
+                Name = game.Name,
+                GameJson = _sut.Serialize(game)
+            };
+
+            dbContext.Add(gameDbModel);
+            dbContext.SaveChanges();
 
             // Act
-            _sut.DiscardPlayerCards(game.Name, game.Players[0].Id, "0S");
+            game = _sut.DiscardPlayerCards(game.Name, game.Players[0].Id, "0S");
 
             // Assert
-            Assert.Equal(game.TableCards.Count, 0);
-            Assert.Equal(game.BurnedCardsCount, 16);
+            Assert.Empty(game.TableCards);
+            Assert.Equal(16, game.BurnedCardsCount);
         }
 
         [Fact]
-        public void DiscardPlayerCards_ShouldReturnCorrectBurnedCardsCount_2ndTime()
+        public void DiscardPlayerCards_ShouldReturnException_NotPlayersTurn()
         {
             // Arrange
             var gameName = "Game name";
-            var game = _sut.CreateGame(gameName);
-            game.Players.AddRange(CreatePlayersListMock(1));
-
-            players.Add(new Player()
+            var game = new Game()
             {
-                Id = "4534g34g",
-                Name = "Igor1",
-                InHandCards = new List<string>() { "AH", "AD", "AS" },
-                Status = StatusEnum.PLAYING
-            });
+                BurnedCardsCount = 0,
+                CardsInDeck = new List<string>() { "2A", "3H", "7S", "8S" },
+                DateCreated = DateTime.Now,
+                Name = gameName,
+                LastBurnedCard = "6S",
+                Status = StatusEnum.PLAYING,
+                TableCards = new List<string>() { "2A", "3A", "4A", "5H", "7H", "0A", "5A", "8H", "9H", "3H", "7H", "3S", "4S", "7S", "9S" }, // 15 Cards on the table
+                Players = CreatePlayersListMock(2)
+            };
 
-            players.Add(new Player()
+            game.PlayerNameTurn = game.Players[0].Name;
+
+            var gameDbModel = new GameDbModel()
             {
-                Id = "asdfsdf34",
-                Name = "Bob2",
-                InHandCards = new List<string>() { "KH", "KD", "KS", "8S", "8A" },
-                Status = StatusEnum.PLAYING
-            });
+                Name = game.Name,
+                GameJson = _sut.Serialize(game)
+            };
 
-            game.TableCards.AddRange(new List<string>() { "2A", "3A", "4A", "5H", "7H", "0A", "5A", "8H", "9H", "3H", "7H", "3S", "4S", "7S", "9S" }); // 15 Cards on the table
+            dbContext.Add(gameDbModel);
+            dbContext.SaveChanges();
 
             // Act
-            _sut.DiscardPlayerCards(game.Name, game.Players[0].Id, "0S");
-            _sut.DiscardPlayerCards(game.Name, game.Players[1].Id, "AH,AD,AS");
-            _sut.DiscardPlayerCards(game.Name, game.Players[2].Id, "KH,KD,KS");
-            _sut.DiscardPlayerCards(game.Name, game.Players[0].Id, "0H");
+            var ex = Assert.Throws<GameException>(() => _sut.DiscardPlayerCards(game.Name, game.Players[1].Id, "0S"));
 
             // Assert
-            Assert.Equal(game.TableCards.Count, 0);
-            Assert.Equal(game.BurnedCardsCount, 23);
+            Assert.Equal("Player not in turn", ex.Message);
         }
 
+        private void CreateNewDb()
+        {
+            // Create a fresh service provider, and therefore a fresh 
+            // InMemory database instance.
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
+            // Create a new options instance telling the context to use an
+            // InMemory database and the new service provider.
+            var builder = new DbContextOptionsBuilder<ShitheadDBContext>();
+            builder.UseInMemoryDatabase(databaseName: "ShitheadGamesTest")
+               .UseInternalServiceProvider(serviceProvider);
+
+            dbContext = new ShitheadDBContext(builder.Options);
+        }
     }
 }
