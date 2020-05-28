@@ -359,7 +359,7 @@ namespace ShitheadCardsApi
             _ctx.SaveChanges();
         }
 
-        private string Serialize(Game game)
+        public string Serialize(Game game)
         {
             var options = new JsonSerializerOptions
             {
