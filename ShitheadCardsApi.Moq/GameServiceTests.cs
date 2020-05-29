@@ -44,26 +44,9 @@ namespace ShitheadCardsApi.Moq
         {
             // Arrange
             var gameName = "Game name";
-            var game = new Game()
-            {
-                BurnedCardsCount = 0,
-                CardsInDeck = new List<string>() { "2A", "3H", "7S", "8S" },
-                DateCreated = DateTime.Now,
-                Name = gameName,
-                LastBurnedCard = "6S",
-                Status = StatusEnum.PLAYING,
-                TableCards = new List<string>() {  "7S", "9S" }, 
-                Players = CreatePlayersListMock(2)
-            };
-
-            game.PlayerNameTurn = game.Players[0].Name;
-
-            var gameDbModel = new GameDbModel()
-            {
-                Name = gameName,
-                GameJson = _sut.Serialize(game)
-            };
-
+            var game = CreateGameMock(gameName, StatusEnum.PLAYING, 2, new List<string>() { "7S", "9S" });
+            var gameDbModel = CreateGameDbModelMock(game);
+           
             shitheadDbContext.Setup(x => x.Find<GameDbModel>(gameName))
                 .Returns(gameDbModel);
 
@@ -78,7 +61,293 @@ namespace ShitheadCardsApi.Moq
             Assert.Equal(3, game.BurnedCardsCount);
         }
 
+        [Fact]
+        public void CreateOrJoinGame_ShouldReturnCorrectAmountOfCardsInDeck()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 1);
+            var gameDbModel = CreateGameDbModelMock(game);
 
+            shitheadDbContext.Setup(x => x.Find<GameDbModel>(gameName))
+                .Returns(gameDbModel);
+
+            // Act
+            _sut.CreateOrJoinGame(gameName, "ErvaMate");
+            _sut.CreateOrJoinGame(gameName, "CuiaDePlastica");
+
+            // Assert
+            Assert.Equal((game.CardsInDeck.Count - 18), _sut.GetGame(gameName).CardsInDeck.Count);
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP1_2Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 2);
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0, 1, -1, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.DoesNotContain(game.Players[0].Id, sortedPlayers.Select(p => p.Id));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP2_2Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 2);
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1, 1, -1, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.DoesNotContain(game.Players[1].Id, sortedPlayers.Select(p => p.Id));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP1_3Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 3);
+            var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP2_3Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 3);
+            var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[0].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP3_3Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 3);
+            var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+
+
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP1_4Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 4);
+            var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[3].Name, game.Players[1].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP2_4Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 4);
+            var expectedPlayerOrder = new List<string>() { game.Players[3].Name, game.Players[0].Name, game.Players[2].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP3_4Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 4);
+            var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name, game.Players[3].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP4_4Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 4);
+            var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name, game.Players[0].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 3, 1, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+
+
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP1_5Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
+            var expectedPlayerOrder = new List<string>() { game.Players[3].Name, game.Players[4].Name, game.Players[2].Name, game.Players[1].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP2_5Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
+            var expectedPlayerOrder = new List<string>() { game.Players[4].Name, game.Players[0].Name, game.Players[3].Name, game.Players[2].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP3_5Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
+            var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name, game.Players[4].Name, game.Players[3].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP4_5Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
+            var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name, game.Players[5].Name, game.Players[0].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 3, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+        [Fact]
+        public void GetOtherPlayers_ShouldReturnCorrectOrderOfPlayers_CurrentUserP5_5Players()
+        {
+            // Arrange
+            var gameName = "Game name";
+            var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
+            var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[3].Name, game.Players[1].Name, game.Players[0].Name };
+
+            // Act
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 4, 2, -2, new List<Player>());
+
+            // Assert
+            Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
+            Assert.Equal(expectedPlayerOrder, sortedPlayers.Select(p => p.Name));
+        }
+
+
+
+        private Game CreateGameMock(string name, StatusEnum status, int playersNeeded, List<string> tableCards = null)
+        {
+            var game = new Game()
+            {
+                BurnedCardsCount = 0,
+                CardsInDeck = new List<string>()
+                { "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S",
+                  "2A", "3H", "7S", "8S"
+                },
+                DateCreated = DateTime.Now,
+                Name = name,
+                LastBurnedCard = "",
+                Status = status,
+                TableCards = tableCards ?? new List<string>(),
+                Players = CreatePlayersListMock(playersNeeded)
+            };
+
+            game.PlayerNameTurn = game.Players[0].Name;
+
+            return game;
+        }
+
+        private GameDbModel CreateGameDbModelMock(Game game)
+        {
+            var gameDbModel = new GameDbModel()
+            {
+                Name = game.Name,
+                GameJson = _sut.Serialize(game)
+            };
+
+            return gameDbModel;
+        }
+        
         private List<Player> CreatePlayersListMock(int playersNeeded)
         {
             players = new List<Player>();
