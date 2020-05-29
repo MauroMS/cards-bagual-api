@@ -65,7 +65,7 @@ namespace ShitheadCardsApi
 
         public Game JoinGame(Game game, string playerName)
         {
-            if (game.Status == StatusEnum.OUT || game.DateCreated > DateTime.Now.AddHours(-2))
+            if (game.Status == StatusEnum.OUT || DateTime.Now.AddHours(-2).CompareTo(game.DateCreated) == 1)
             {
                 //reset game if already finished
                 List<string> cards = _shitheadService.CreateDeck();
