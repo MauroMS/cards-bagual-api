@@ -5,44 +5,55 @@ namespace ShitheadCardsApi
 {
     public static class GameHelper
     {
-        public static List<Player> GetOtherPlayers(List<Player> players, int currentPlayerIndex, int positiveSeed, int nextPlayer, List<Player> sortedPlayers)
+        public static List<Player> GetOtherPlayersInternal(List<Player> players, int currentPlayerIndex, int rightPlayers, int leftPlayers, List<Player> sortedPlayers)
         {
             int expectedPlayerCount = players.Count - 1;
             if (sortedPlayers.Count == expectedPlayerCount)
                 return sortedPlayers;
 
-            if (nextPlayer < 0)
+            if (leftPlayers < 0)
             {
-                int endOfListIndex = currentPlayerIndex + nextPlayer;
+                int endOfListIndex = currentPlayerIndex + leftPlayers;
                 if (endOfListIndex < 0)
                     endOfListIndex = players.Count + endOfListIndex;
                 if (endOfListIndex == currentPlayerIndex)
                     sortedPlayers.Add(players[endOfListIndex - 1]);
                 else
                     sortedPlayers.Add(players[endOfListIndex]);
-                return GetOtherPlayers(players, currentPlayerIndex, positiveSeed, ++nextPlayer, sortedPlayers);
+                return GetOtherPlayersInternal(players, currentPlayerIndex, rightPlayers, ++leftPlayers, sortedPlayers);
             }
+            else
+            {
+                //int beginingOfListIndex = currentPlayerIndex - positiveSeed;
+                //if (beginingOfListIndex < 0)
+                //    rightPlayers = beginingOfListIndex - players.Count;
+                //if (beginingOfListIndex == currentPlayerIndex)
+                //    sortedPlayers.Add(players[beginingOfListIndex + 1]);
+                //else
+                //    sortedPlayers.Add(players[beginingOfListIndex]);
+                //return GetOtherPlayersInternal(players, currentPlayerIndex, --rightPlayers, 0, sortedPlayers);
 
-            
+                if (rightPlayers > expectedPlayerCount)
+                    rightPlayers = rightPlayers - expectedPlayerCount;
 
-            //if (nextPlayer == 0)
-            //{
-            //    if (positiveSeed > 0)
-            //        return GetOtherPlayers(players, currentPlayerIndex, positiveSeed - 1, currentPlayerIndex + positiveSeed, sortedPlayers);
+                if (rightPlayers < 0)
+                    rightPlayers = players.Count + rightPlayers;
 
-            //    sortedPlayers.Add(players[nextPlayer]);
-            //}
+                if (rightPlayers != currentPlayerIndex && !sortedPlayers.Contains(players[rightPlayers]))
+                    sortedPlayers.Add(players[rightPlayers]);
 
-            //if (nextPlayer > 0)
-            //{
-            //    if (nextPlayer >= expectedPlayerCount)
-            //        nextPlayer = 0 + positiveSeed;
 
-            //    if (positiveSeed == 0)
-            //        sortedPlayers.Add(players[nextPlayer]);
-            //    else
-            //        return GetOtherPlayers(players, currentPlayerIndex, --positiveSeed, ++nextPlayer, sortedPlayers);
-            //}
+                return GetOtherPlayersInternal(players, currentPlayerIndex, --rightPlayers, 0, sortedPlayers);
+            }
+        }
+
+        public static List<Player> GetOtherPlayers(List<Player> players, int currentIndex)
+        {
+            List<Player> sortedPlayers = new List<Player>();
+            if (players.Count == 2)
+                sortedPlayers = GetOtherPlayersInternal(players, currentIndex, 1, -1, sortedPlayers);
+            else
+                sortedPlayers = GetOtherPlayersInternal(players, currentIndex, currentIndex + 2, -2, sortedPlayers);
 
             return sortedPlayers;
         }

@@ -16,7 +16,7 @@ namespace ShitheadCardsApi.Models
             PlayerNameTurn = game.PlayerNameTurn;
 
 
-            Players = GameHelper.GetOtherPlayers(game.Players, 0, 0, 0, new List<Player>() { }).ConvertAll(op => new PlayerOtherResponse(op)); //game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
+            //Players = GameHelper.GetOtherPlayers(game.Players, 0, 0, 0, new List<Player>() { }).ConvertAll(op => new PlayerOtherResponse(op)); //game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
             MySelf = new PlayerMyselfResponse(game.Players.FirstOrDefault(gp => gp.Id == playerId));
         }
 
