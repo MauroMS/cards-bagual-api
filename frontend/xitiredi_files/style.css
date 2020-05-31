@@ -2,12 +2,12 @@
 
 * {
   transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53);
-transition-duration: .2s;
+  transition-duration: .2s;
 }
 
 body {
-  width:100vw;
-  height:100vh;
+  width:95vw;
+  height:95vh;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77a358+0,156d23+94 */
   background:
   radial-gradient(black 15%, transparent 16%) 0 0,
@@ -16,90 +16,21 @@ body {
   radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
   background-color:#41700e;
   background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 
-margin: 0;
-padding: 0;
+  display: grid;
+  grid-template-areas:
+    'gameName deck burned title'
+    'player1 mesa mesa player3'
+    'player1 mesa mesa player3'
+    'player2 mycards mycards player4'
+    'player2 mycards mycards player4';
+  grid-auto-columns: 25%;  
+  grid-auto-rows: 20%;  
+  grid-gap: 5px;
+  padding: 10px;
 }
 
-.backgroundLogo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background:
-  radial-gradient(black 15%, transparent 16%) 0 0,
-  radial-gradient(black 15%, transparent 16%) 8px 8px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-  background-color:#41700e;
-  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
--moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-margin: 0;
-padding: 0;
-}
-
-.backgroundLogo2 {
-  color:white;
-  width:100vw;
-  height:100vh;
-  position:fixed;
-  z-index:50;
-  font-size: 35px;
-  font-family: 'Patua One', cursive;
-text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
--webkit-text-stroke: 0.4px #000000;
--webkit-text-fill-color: #FFFFFF;
-  display: none;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
-  background:
-  radial-gradient(black 15%, transparent 16%) 0 0,
-  radial-gradient(black 15%, transparent 16%) 8px 8px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-  background-color:#41700e;
-  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
--moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-margin: 0;
-padding: 0;
-}
-
-.backgroundLogo3 {
-  color:white;
-  width:100vw;
-  height:100vh;
-  position:fixed;
-  z-index:50;
-  font-size: 35px;
-  font-family: 'Patua One', cursive;
-text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
--webkit-text-stroke: 0.4px #000000;
--webkit-text-fill-color: #FFFFFF;
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
-  background:
-  radial-gradient(black 15%, transparent 16%) 0 0,
-  radial-gradient(black 15%, transparent 16%) 8px 8px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-  radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-  background-color:#41700e;
-  background-size:16px 16px; Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77a358', endColorstr='#156d23',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-  -webkit-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
--moz-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-box-shadow: inset 3px -5px 91px 30px rgba(0,0,0,0.73);
-margin: 0;
-padding: 0;
-}
 
 .currentPlayer {
   -webkit-text-fill-color: yellow  !important;
@@ -119,36 +50,36 @@ padding: 0;
 .starter {
   text-decoration: none;
   cursor: pointer;
-  z-index: 15;
+  z-index: 100;
   color:white;
   position: absolute;
-  top: 80%;
+  top: 70%;
   left: 60%;
   background-color: transparent;
   font-size: 25px;
   transform: rotate(-4deg);
   font-family: 'Patua One', cursive;
-text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
--webkit-text-stroke: 0.4px #000000;
--webkit-text-fill-color: yellow;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: yellow;
 }
 
 
 .discard {
   text-decoration: none;
   cursor: pointer;
-  z-index: 15;
+  z-index: 100;
   color:white;
   position: absolute;
-  top: 90%;
+  top: 70%;
   left: 60%;
   background-color: transparent;
   font-size: 25px;
   transform: rotate(-4deg);
   font-family: 'Patua One', cursive;
-text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
--webkit-text-stroke: 0.4px #000000;
--webkit-text-fill-color: yellow;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: yellow;
 }
 
 .starter:hover {
@@ -156,13 +87,11 @@ text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
 }
 
 .deck {
-  top: 50px;
-  left: 30%;
+  grid-area: deck;
 }
 
 .burned {
-  top: 50px;
-  left: 50%;
+  grid-area: burned;
 }
 
 .burnedLastTime {
@@ -170,125 +99,134 @@ text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
 }
 
 .mesa {
-  top: 40%;
-  left: 30%;
+  grid-area: mesa;
   transform: rotate(0deg) !important;
-  height: 100px;
-  width: 40%;
   background-color: #426f0f;
 }
 
 
-.player1 {
-  top: 10%;
-  left: 10%;
-}
-
 .playerCards {
   position: relative;
+  transform: rotate(2deg);
 }
 
+.player1 {
+  grid-area: player1;
+}
 .player2 {
-  top: 50%;
-  left: 10%;
+  grid-area: player2;
 }
 .player3 {
-  top: 10%;
-  left: 80%;
+  grid-area: player3;
+  justify-self: end;
 }
 .player4 {
-  top: 50%;
-  left: 80%;
+  grid-area: player4;
+  justify-self: end;  
 }
 
 .cardBlock {  
   display: inline;
-  position: absolute;
+  
   z-index: 16;
   color:white;
   font-size: 25px;
-
-  transform: rotate(5deg);
   font-family: 'Patua One', cursive;
-text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
--webkit-text-stroke: 0.4px #000000;
--webkit-text-fill-color: #FFFFFF;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: #FFFFFF;
+
+}
+
+.cardRack {
+  display: grid;
+  margin-top: 10px;
 }
 
 .mycards {
-  top: 60%;
-  left: 40%;
+  grid-area: mycards;
+  display: inline;
+
 }
 
-
-#dealerCards {
-  display: inline;
-  position: absolute;
-  top: 150px;
-  left: 50px;
+.cardsDown {
+   display: grid;  
+   grid-area: 1 / 1 / 3 / 1; 
+   grid-auto-columns: min-content;
+}
+.cardsUp {
+   display: grid;  
+   grid-area: 2 / 1 / 4 / 1; 
+   grid-auto-columns: min-content;
+}
+#myCards {
+   display: grid;  
+   grid-area: 3 / 1 / 5 / 1; 
+   grid-auto-columns: min-content;
 }
 
 #playerCards {
-  position: relative;
-  display: inline;
+  display: grid;
 }
 
 #mesaCards {
   position: relative;
-  display: inline;
+  display: grid;
+  grid-auto-columns: min-content;
+  margin-top: 15px;
 }
 #deckCards {
   position: relative;
   display: inline;
+  vertical-align: top;
+  margin-left: 10px;
 }
 #burnedCards {
   position: relative;
   display: inline;
+  vertical-align: top;
+  margin-left: 10px;
 }
 
 #title {
     font-size: x-large;
-    left: 80%;
-    position: absolute;
+    grid-area: title;
     color: #f1c289;
+    justify-self: end;
 }
-
 
 #gameName {
     font-size: x-large;
-    left: 2%;
-    position: absolute;
+    grid-area: gameName;
     color: #f1c289;
     font-style: italic;
 }
 
 a {
   color: inherit; /* blue colors for links too */
-  text-decoration: inherit; /* no underline */
+  text-decoration: inherit; /* no underline */  
 }
 
-.formContainer {
-  position: absolute;
-  top: 40px;
-  left: 1050px;
-  color: white;
-  width: 570px;
-  display: inline;
-  display: flex;
-  justify-content: space-around;
-  position: absolute;
-}
 
 
 IMG.carta {
-  position: absolute;
-  display: inline;
-  z-index:5;
+
   transform: rotate(171deg);
   -webkit-box-shadow: 3px 2px 32px 4px rgba(0,0,0,0.88);
-  width:60px;
-  height:80px;
+  width: 5vw;
+
+  grid-row-start: 1;
+  grid-row-end: 3;
+  grid-column-start: 1;
+  grid-column-end: 1;
 }
+
+@media only screen and (max-width: 1000px)  and (orientation: portrait) {
+  IMG.carta {
+      width: 10vw;
+  }
+}
+
 
 IMG.selected {
   border: solid 3px yellow;

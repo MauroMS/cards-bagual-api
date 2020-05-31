@@ -34,7 +34,7 @@ $(document).ready(function() {
 
     let imageURL = 'https://deckofcardsapi.com/static/img/XX.png';
 
-    let imageBackURL = "https://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-bicycle-rider-back-1_1024x1024.png?v=1523371937";
+    let imageBackURL = "https://cdn.shopify.com/s/files/1/0200/7616/products/cardback.png?v=1523371937";
    
     let gameName = getValidPrompt("Please enter the game name, no spaces allowed, max 15 chars", true);
 
@@ -88,21 +88,30 @@ $(document).ready(function() {
        }
     }
 
+    function buildCardImages(pileList, classes, draggable) {
+        var cardsList = "";
+        for (var i = 0; i < pileList.length; i++) { 
+            var styleCss;
+
+            if ( i >= 18) {
+               styleCss = `grid-column-start: ${i+1-18};grid-column-end: ${i+3-18};grid-row-start:2;grid-row-end:4;`;
+            } else {
+               styleCss = `grid-column-start: ${i+1};grid-column-end: ${i+3}`;
+            }
+
+            cardsList += `<img class="carta ${classes}" draggable="${draggable}" style="${styleCss}" src="${getImageUrl(pileList[i])}" />`;
+        }  
+        return cardsList;
+    }
+
     // DONE
     function checkIfIAmShithead(gameStatus, player) {
 
       if (gameStatus == "OUT" && player.status == "PLAYING") {
           clearInterval(refresher);
 
-          document.getElementById("myCardsDown").innerHTML = "";
-
-          for (var i = 0; i < mySelf.downCards.length; i++) {
-              let posCard = (i * 20 + 20);
-            
-              card = `<img class="carta mycarta" style="left: ${posCard}px" src="${getImageUrl(mySelf.downCards[i])}" />`;
-              document.getElementById("myCardsDown").innerHTML += card;
-          }  
-
+          document.getElementById("myCardsDown").innerHTML = buildCardImages(player.downCards, "mycarta", false);
+         
           document.getElementById("shitheadAudio").play();
           alert ("You are the Shithead!!!");
       }
@@ -132,7 +141,7 @@ $(document).ready(function() {
       document.getElementById("deckCount").innerHTML = remaining;
 
       if (remaining == 0) {
-        document.getElementById("deckCards").innerHTML = ""; 
+          document.getElementById("deckCards").innerHTML = ""; 
       }
     }
 
@@ -154,14 +163,7 @@ $(document).ready(function() {
         var apiCards = player.openCards.join(",");
 
         if (currentCards != apiCards) {  
-            document.getElementById("p" + playerIndex + "CardsUp").innerHTML = "";
-
-            for (var i = 0; i < player.openCards.length; i++) {
-                let posCard = (i * 20 + 20);
-              
-                card = `<img class="carta" draggable="false" style="left: ${posCard}px" src="${getImageUrl(player.openCards[i])}" />`;
-                document.getElementById("p" + playerIndex + "CardsUp").innerHTML += card;
-            }
+            document.getElementById("p" + playerIndex + "CardsUp").innerHTML = buildCardImages(player.openCards, "", false)
         }
 
         while ($("#p" + playerIndex + "CardsDown IMG").length > player.downCount) {
@@ -188,17 +190,8 @@ $(document).ready(function() {
 
         var apiCards = tableCards.join(",");
 
-        if (currentCards != apiCards) {  
-            document.getElementById("mesaCards").innerHTML = "";
-
-            var tableHtml = "";
-            for (var i = 0; i < tableCards.length; i++) {
-                let posCard = (i * 20 + 20);
-              
-                card = `<img class="carta" draggable="false" style="left: ${posCard}px" src="${getImageUrl(tableCards[i])}" />`;
-                tableHtml += card;
-            }
-            document.getElementById("mesaCards").innerHTML = tableHtml;
+        if (currentCards != apiCards) { 
+            document.getElementById("mesaCards").innerHTML = buildCardImages(tableCards, "", false);
             document.getElementById("mesaCardsCount").innerHTML = tableCards.length;
         }
 
@@ -214,9 +207,7 @@ $(document).ready(function() {
           }
 
           response.json().then(function(game) {
-
               refreshGame(game);
-              
             });
         });
     }
@@ -258,14 +249,7 @@ $(document).ready(function() {
             var apiCards = mySelf[pile].join(",");
 
             if (currentCards != apiCards) {  
-                document.getElementById(elementContainer).innerHTML = "";
-
-                for (var i = 0; i < mySelf[pile].length; i++) {
-                    let posCard = (i * 20 + 20);
-                  
-                    card = `<img class="carta mycarta" style="left: ${posCard}px" src="${getImageUrl(mySelf[pile][i])}" />`;
-                    document.getElementById(elementContainer).innerHTML += card;
-                }
+                document.getElementById(elementContainer).innerHTML = buildCardImages(mySelf[pile], "mycarta", true);
             }
         }
         while ($("#myCardsDown IMG").length > mySelf.downCount) {
@@ -442,6 +426,7 @@ $(document).ready(function() {
    $('#starter').click(function() {
          startMode = false;
          $(this).addClass("hidden");
+         $('#discard').removeClass("hidden");
          $("IMG.selected").removeClass("selected");
          fetch(baseURL + '/game/' + gameName + '/' + playerId + "/start");
     });
@@ -600,11 +585,115 @@ $(document).ready(function() {
       
     
 <body id="body">
-    <div id="title"> <a href="https://github.com/MauroMS/shithead-cards" target=”_blank”>Shithead Multiplayer</a> </div>
+    <div id="title"> <a href="https://github.com/MauroMS/shithead-cards" target=”_blank”>Shithead <BR/>
+    Multiplayer</a> </div>
     <div id="gameName">Game name: </div>
+
+    <div id="starter" class="starter">
+        <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up">Start</div>
+    </div>
+
+
+    <div id="discard" class="discard hidden">
+        <div style="z-index:31;" id="discardSelected" title="Clic here to throw the selected card(s)">Throw</div>
+    </div>
+
+    <div class="cardBlock deck">
+      Deck (<span id="deckCount" title="Number of cards left on the deck">-</span>)
+      <div id="deckCards">
+        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/cardback.png">
+      </div>
+    </div>
+
+    <div id="burned" class="cardBlock burned">
+     Burned (<span id="burnedCount">-</span>)
+      <div id="burnedCards" title="Last card burned">
+       
+      </div>
+    </div>
+
+    <div id="mesa" class="cardBlock mesa" title="Drag selected cards here. Double click to collect cards to your hand">
+      Table (<span id="mesaCardsCount">-</span>)
+      <div id="mesaCards">
+
+      </div>
+    </div>
+
+    <div class="cardBlock mycards" title="Click on an available card to select/unselect it. You can select multiple of the same number. Then drag and drop to the table green area">
+      <span id="myname">You</span>
+      <div class="cardRack" style="margin-top: 35px;">
+        <div id="myCardsDown" class="playerCards cardsDown">
+          <img class="carta mycarta" style="grid-column-start: 1;grid-column-end: 3" src="./xitiredi_files/cardback.png">
+          <img class="carta mycarta" style="grid-column-start: 2;grid-column-end: 4" src="./xitiredi_files/cardback.png">
+          <img class="carta mycarta" style="grid-column-start: 3;grid-column-end: 5" src="./xitiredi_files/cardback.png">
+        </div>
+        <div id="myCardsUp" class="playerCards cardsUp">
+
+        </div>
+        <div id="myCards" class="playerCards">
+
+        </div>
+      </div>  
+    </div>
+
+    <div class="cardBlock player1 hidden" id="p1">
+      <span id="p1name">Player 1</span>(<span id="p1Count" title="number of cards on players hand">-</span>)
+      <div class="cardRack">      
+        <div id="p1CardsDown" class="playerCards cardsDown"style="top:20px">
+          <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
+        </div>
+        <div id="p1CardsUp" class="playerCards cardsUp" style="top:40px">
+        </div>
+      </div>
+  </div>
+
+    <div class="cardBlock player2 hidden" id="p2">
+      <span id="p2name">Player 2</span>(<span id="p2Count" title="number of cards on players hand">-</span>)
+      <div class="cardRack">      
+        <div id="p2CardsDown" class="playerCards cardsDown" style="top:20px">
+          <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
+        </div>
+        <div id="p2CardsUp" class="playerCards cardsUp" style="top:40px">
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="cardBlock player3 hidden" id="p3">
+      <span id="p3name">Player 3</span>(<span id="p3Count" title="number of cards on players hand">-</span>)
+      <div class="cardRack">      
+        <div id="p3CardsDown" class="playerCards cardsDown" style="top:20px">
+          <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
+        </div>
+        <div id="p3CardsUp" class="playerCards cardsUp" style="top:40px">
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden cardBlock player4" id="p4" >
+      <span id="p4name">Player 4</span>(<span id="p4Count" title="number of cards on players hand">-</span>)
+      <div class="cardRack">      
+        <div id="p4CardsDown" class="playerCards cardsDown" style="top:10%">
+          <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
+          <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
+        </div>
+        <div id="p4CardsUp" class="playerCards cardsUp" style="top:40px">
+         
+        </div>
+      </div>
+    </div>
+
+
+
     <div style="width: 100vw; height: 100vh; position: absolute; z-index: 30; display: none;" class="backgroundLogo" id="id">
-        <!--?xml version="1.0" encoding="utf-8"?-->
-        <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 
         <svg style="transform: rotate(-10deg);" version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="810px" height="213px" viewBox="-169.762 -39.45 810 213" enable-background="new -169.762 -39.45 810 213" xml:space="preserve">
             <g>
@@ -1196,103 +1285,9 @@ $(document).ready(function() {
 
     </div>
 
-    <div id="starter" class="starter">
-        <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up">Start</div>
-    </div>
-
-
-    <div id="discard" class="discard">
-        <div style="z-index:31;" id="discardSelected" title="Clic here to throw the selected card(s)">Throw</div>
-    </div>
-
-    <div class="cardBlock deck">
-      Deck (<span id="deckCount" title="Number of cards left on the deck">-</span>)
-      <div id="deckCards">
-        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-    </div>
-
-    <div id="burned" class="cardBlock burned">
-     Burned (<span id="burnedCount">-</span>)
-      <div id="burnedCards" title="Last card burned">
-       
-      </div>
-    </div>
-
-    <div id="mesa" class="cardBlock mesa" title="Drag selected cards here. Double click to collect cards to your hand">
-      Table (<span id="mesaCardsCount">-</span>)
-      <div id="mesaCards">
-
-      </div>
-    </div>
-
-    <div class="cardBlock mycards" title="Click on an available card to select/unselect it. You can select multiple of the same number. Then drag and drop to the table green area">
-      <span id="myname">You</span>
-      <div id="myCardsDown" class="playerCards"style="top:20px">
-        <img class="carta mycarta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta mycarta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta mycarta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="myCardsUp" class="playerCards" style="top:40px">
-        <img class="carta" style="left: 20px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="myCards" class="playerCards" style="top:100px">
-
-      </div>
-    </div>
-
-    <div class="cardBlock player1 hidden" id="p1">
-      <span id="p1name">Player 1</span>(<span id="p1Count" title="number of cards on players hand">-</span>)
-      <div id="p1CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="p1CardsUp" class="playerCards" style="top:40px">
-      </div>
-    </div>
-
-    <div class="cardBlock player2 hidden" id="p2">
-      <span id="p2name">Player 2</span>(<span id="p2Count" title="number of cards on players hand">-</span>)
-      <div id="p2CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="p2CardsUp" class="playerCards" style="top:40px">
-
-      </div>
-    </div>
-
-
-    <div class="cardBlock player3 hidden" id="p3">
-      <span id="p3name">Player 3</span>(<span id="p3Count" title="number of cards on players hand">-</span>)
-      <div id="p3CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="p3CardsUp" class="playerCards" style="top:40px">
-      </div>
-    </div>
-
-    <div class="hidden cardBlock player4" id="p4" >
-      <span id="p4name">Player 4</span>(<span id="p4Count" title="number of cards on players hand">-</span>)
-      <div id="p4CardsDown" class="playerCards"style="top:20px">
-        <img class="carta" style="left: 20px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 40px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-        <img class="carta" style="left: 60px" draggable="false" src="./xitiredi_files/playing-cards-bicycle-rider-back-1_1024x1024.png">
-      </div>
-      <div id="p4CardsUp" class="playerCards" style="top:40px">
-       
-      </div>
-    </div>
-
-<audio id="shitheadAudio">
-  <source src="pigs3.mp3" type="audio/ogg">
-  Your browser does not support the audio element.
-</audio>
+  <audio id="shitheadAudio">
+    <source src="pigs3.mp3" type="audio/ogg">
+    Your browser does not support the audio element.
+  </audio>
 </body>
 </html>

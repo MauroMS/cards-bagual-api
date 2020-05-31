@@ -76,6 +76,7 @@ namespace ShitheadCardsApi
                 game.PlayerNameTurn = null;
                 game.TableCards = new List<string>();
                 game.DateCreated = DateTime.Now;
+                game.Players = new List<Player>();
             }
             else
             { 
@@ -110,7 +111,8 @@ namespace ShitheadCardsApi
 
         public Game GetGame(string name)
         {
-            GameDbModel gameDbModel = _ctx.Find<GameDbModel>(name);
+            string lowName = name.ToLower();
+            GameDbModel gameDbModel = _ctx.Find<GameDbModel>(lowName);
             if (gameDbModel == null)
                 return null;
             return Deserialize(gameDbModel);
@@ -335,7 +337,8 @@ namespace ShitheadCardsApi
 
         private static object GetGameLock(string gameName)
         {
-            return locker.GetOrAdd(gameName, new Object());
+            string lowGameName = gameName.ToLower();
+            return locker.GetOrAdd(lowGameName, new Object());
         }
 
         private void SaveGame(Game game)
