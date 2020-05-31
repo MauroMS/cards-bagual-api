@@ -15,7 +15,7 @@ namespace ShitheadCardsApi.Models
             TableCards = game.TableCards;
             PlayerNameTurn = game.PlayerNameTurn;
             Players = GameHelper.GetOtherPlayers(game.Players, playerId).ConvertAll(op => new PlayerOtherResponse(op));
-            MySelf = new PlayerMyselfResponse(game.Players.FirstOrDefault(gp => gp.Id == playerId));
+            MySelf = new PlayerMyselfResponse(game.Status, game.Players.FirstOrDefault(gp => gp.Id == playerId));
         }
 
         public string Name { get; set; }
@@ -48,7 +48,7 @@ namespace ShitheadCardsApi.Models
 
     public class PlayerMyselfResponse
     {
-        public PlayerMyselfResponse(Player player)
+        public PlayerMyselfResponse(StatusEnum gameStatus, Player player)
         {
             if (player == null)
                 return;
@@ -58,12 +58,18 @@ namespace ShitheadCardsApi.Models
             DownCount = player.DownCards.Count;
             OpenCards = player.OpenCards;
             Status = player.Status;
+
+            if (gameStatus == StatusEnum.OUT)
+            {
+                DownCards = player.DownCards;
+            }
         }
 
         public string Name { get; set; }
         public int DownCount { get; set; }
         public List<string> HandCards { get; set; }
         public List<string> OpenCards { get; set; }
+        public List<string> DownCards { get; set; }
         public StatusEnum Status { get; set; }
     }
 }

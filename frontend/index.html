@@ -93,8 +93,18 @@ $(document).ready(function() {
 
       if (gameStatus == "OUT" && player.status == "PLAYING") {
           clearInterval(refresher);
+
+          document.getElementById("myCardsDown").innerHTML = "";
+
+          for (var i = 0; i < mySelf.downCards.length; i++) {
+              let posCard = (i * 20 + 20);
+            
+              card = `<img class="carta mycarta" style="left: ${posCard}px" src="${getImageUrl(mySelf.downCards[i])}" />`;
+              document.getElementById("myCardsDown").innerHTML += card;
+          }  
+
           document.getElementById("shitheadAudio").play();
-          alert ("You are Shithead");
+          alert ("You are the Shithead!!!");
       }
     }
 
