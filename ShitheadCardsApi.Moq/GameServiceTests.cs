@@ -88,7 +88,7 @@ namespace ShitheadCardsApi.Moq
             var game = CreateGameMock(gameName, StatusEnum.SETUP, 2);
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[0].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -103,7 +103,7 @@ namespace ShitheadCardsApi.Moq
             var game = CreateGameMock(gameName, StatusEnum.SETUP, 2);
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[1].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -120,7 +120,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[0].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -136,7 +136,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[0].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[1].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -152,7 +152,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[2].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -169,7 +169,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[3].Name, game.Players[1].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[0].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -185,7 +185,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[3].Name, game.Players[0].Name, game.Players[2].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[1].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -200,12 +200,8 @@ namespace ShitheadCardsApi.Moq
             var game = CreateGameMock(gameName, StatusEnum.SETUP, 4);
             var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name, game.Players[3].Name };
 
-            var currentPlayerPosition = 2;
-            var positiveSeed = 2;
-            var nextPlayer = -2;
-
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[2].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -221,7 +217,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name, game.Players[0].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 3);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[3].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -238,7 +234,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[3].Name, game.Players[4].Name, game.Players[2].Name, game.Players[1].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 0);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[0].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -254,7 +250,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[4].Name, game.Players[0].Name, game.Players[3].Name, game.Players[2].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 1);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[1].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -270,7 +266,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[0].Name, game.Players[1].Name, game.Players[4].Name, game.Players[3].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 2);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[2].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -285,11 +281,8 @@ namespace ShitheadCardsApi.Moq
             var game = CreateGameMock(gameName, StatusEnum.SETUP, 5);
             var expectedPlayerOrder = new List<string>() { game.Players[1].Name, game.Players[2].Name, game.Players[0].Name, game.Players[4].Name };
 
-            var nextBeforePlayer = -2;
-            var nextAfterPlayer = 3 + 2;
-
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 3);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[3].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
@@ -305,7 +298,7 @@ namespace ShitheadCardsApi.Moq
             var expectedPlayerOrder = new List<string>() { game.Players[2].Name, game.Players[3].Name, game.Players[1].Name, game.Players[0].Name };
 
             // Act
-            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, 4);
+            var sortedPlayers = GameHelper.GetOtherPlayers(game.Players, game.Players[4].Id);
 
             // Assert
             Assert.Equal(game.Players.Count - 1, sortedPlayers.Count);
