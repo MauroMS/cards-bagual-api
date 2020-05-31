@@ -43,7 +43,7 @@ namespace ShitheadCardsApi.Moq
         public void DiscardPlayerCards_ShouldReturnCorrectBurnedCardsCount()
         {
             // Arrange
-            var gameName = "Game name";
+            var gameName = "gamename";
             var game = CreateGameMock(gameName, StatusEnum.PLAYING, 2, new List<string>() { "7S", "9S" });
             var gameDbModel = CreateGameDbModelMock(game);
            
@@ -65,7 +65,7 @@ namespace ShitheadCardsApi.Moq
         public void CreateOrJoinGame_ShouldReturnCorrectAmountOfCardsInDeck()
         {
             // Arrange
-            var gameName = "Game name";
+            var gameName = "gamename";
             var game = CreateGameMock(gameName, StatusEnum.SETUP, 1);
             var gameDbModel = CreateGameDbModelMock(game);
 

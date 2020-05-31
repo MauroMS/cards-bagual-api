@@ -207,6 +207,7 @@ namespace ShitheadCardsApi
                 ValidatePlayer(player, StatusEnum.PLAYING, game.PlayerNameTurn);
                 
                 DiscardResult result;
+                player.LastDownCard = null;
 
                 if (cards == "down")
                 {
@@ -220,6 +221,7 @@ namespace ShitheadCardsApi
 
                     if (result == DiscardResult.Refuse)
                     {
+                        player.LastDownCard = cardToBePlayed;
                         player.InHandCards.Add(cardToBePlayed);
                         player.InHandCards.AddRange(game.TableCards);
                         game.TableCards.Clear();

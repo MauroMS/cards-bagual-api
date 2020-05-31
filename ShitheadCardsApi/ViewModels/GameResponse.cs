@@ -58,6 +58,7 @@ namespace ShitheadCardsApi.Models
             DownCount = player.DownCards.Count;
             OpenCards = player.OpenCards;
             Status = player.Status;
+            LastDownCard = player.LastDownCard;
 
             if (gameStatus == StatusEnum.OUT)
             {
@@ -70,6 +71,7 @@ namespace ShitheadCardsApi.Models
         public List<string> HandCards { get; set; }
         public List<string> OpenCards { get; set; }
         public List<string> DownCards { get; set; }
+        public string LastDownCard { get; set; }
         public StatusEnum Status { get; set; }
     }
 }
