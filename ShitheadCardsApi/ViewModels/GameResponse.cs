@@ -14,8 +14,7 @@ namespace ShitheadCardsApi.Models
             BurnedCardsCount = game.BurnedCardsCount;
             TableCards = game.TableCards;
             PlayerNameTurn = game.PlayerNameTurn;
-
-            Players = game.Players.FindAll(gp => gp.Id != playerId).ConvertAll(op => new PlayerOtherResponse(op));
+            Players = GameHelper.GetOtherPlayers(game.Players, playerId).ConvertAll(op => new PlayerOtherResponse(op));
             MySelf = new PlayerMyselfResponse(game.Status, game.Players.FirstOrDefault(gp => gp.Id == playerId));
         }
 
@@ -46,7 +45,6 @@ namespace ShitheadCardsApi.Models
         public List<string> OpenCards { get; set; }
         public StatusEnum Status { get; set; }
     }
-
 
     public class PlayerMyselfResponse
     {

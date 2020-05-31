@@ -31,7 +31,7 @@ namespace ShitheadCardsApi
 
             services.AddSwaggerGen(swagger =>
             {
-                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Description = "A simple example ASP.NET Core Web API", });
+                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "Shithead API", Description = "Quick description of all methods available on the API.", });
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -66,7 +66,8 @@ namespace ShitheadCardsApi
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shithead API");
+                c.RoutePrefix = string.Empty;
             });
 
             app.UseCors("CorsDisabled");
