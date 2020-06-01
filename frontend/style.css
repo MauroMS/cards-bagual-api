@@ -82,7 +82,30 @@ body {
   -webkit-text-fill-color: yellow;
 }
 
+#collectMesa {
+  display: inline;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 100;
+  color:white;
+  background-color: transparent;
+  font-size: 25px;
+  transform: rotate(-4deg);
+  font-family: 'Patua One', cursive;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: yellow;
+}
+
+#collectMesa:hover {
+  transform: scale(1.1);
+}
+
 .starter:hover {
+  transform: scale(1.2);
+}
+
+.discard:hover {
   transform: scale(1.2);
 }
 

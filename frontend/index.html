@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0" />
 
   <title>ShitHead Multiplayer Online</title>
-  <link rel="stylesheet" type="text/css" href="./xitiredi_files/style.css"/>
+  <link rel="stylesheet" type="text/css" href="style.css?rnd=132"/>
   <link href="./xitiredi_files/font.css" rel="stylesheet"/>
 
   <script src="./xitiredi_files/jquery.min.js"></script>
@@ -88,7 +88,7 @@ $(document).ready(function() {
        }
     }
 
-    function buildCardImages(pileList, classes, draggable) {
+    function buildCardImages(pileList, classes, draggable, lastDownCard) {
         var cardsList = "";
         for (var i = 0; i < pileList.length; i++) { 
             var styleCss;
@@ -99,7 +99,13 @@ $(document).ready(function() {
                styleCss = `grid-column-start: ${i+1};grid-column-end: ${i+3}`;
             }
 
-            cardsList += `<img class="carta ${classes}" draggable="${draggable}" style="${styleCss}" src="${getImageUrl(pileList[i])}" />`;
+            var classForCard = classes;
+
+            if (lastDownCard == pileList[i]) {
+                classForCard += " lastDown";
+            }
+
+            cardsList += `<img class="carta ${classForCard}" draggable="${draggable}" style="${styleCss}" src="${getImageUrl(pileList[i])}" />`;
         }  
         return cardsList;
     }
@@ -249,7 +255,7 @@ $(document).ready(function() {
             var apiCards = mySelf[pile].join(",");
 
             if (currentCards != apiCards) {  
-                document.getElementById(elementContainer).innerHTML = buildCardImages(mySelf[pile], "mycarta", true);
+                document.getElementById(elementContainer).innerHTML = buildCardImages(mySelf[pile], "mycarta", true, mySelf.lastDownCard);
             }
         }
         while ($("#myCardsDown IMG").length > mySelf.downCount) {
@@ -454,28 +460,31 @@ $(document).ready(function() {
    }
 
    function grabMesaCards() {
+        if (document.getElementById("mesaCards").innerHTML != "") {
+             fetch(baseURL + '/game/' + gameName + '/' + playerId + "/table").then(function(response) {
 
-         fetch(baseURL + '/game/' + gameName + '/' + playerId + "/table").then(function(response) {
+                if (response.status != 200) {
+                    writeResponseError(response);
+                    return;
+                }
 
-            if (response.status != 200) {
-                writeResponseError(response);
-                return;
-            }
-
-            response.json().then(function(data) {
-               refreshGame(data);
-            });
-        });  
+                response.json().then(function(data) {
+                   refreshGame(data);
+                });
+            });  
+        }
    }
 
    $(document).on("dblclick", "#mesa" , function() {
-        if (document.getElementById("mesaCards").innerHTML != "") {
-            grabMesaCards();
-        }
-   
+        grabMesaCards();
    });
 
-    function orderCards(container){
+   $('#collectMesa').click(function() {
+        grabMesaCards();
+   });
+
+
+  function orderCards(container){
       if (container == "myCards") {
            $("#myCards IMG").sort(function(a, b){
                  var aVal = getNumericCardValue(getCardValue(a.src));
@@ -587,10 +596,10 @@ $(document).ready(function() {
 <body id="body">
     <div id="title"> <a href="https://github.com/MauroMS/shithead-cards" target=”_blank”>Shithead <BR/>
     Multiplayer</a> </div>
-    <div id="gameName">Game name: </div>
+    <div id="gameName">Game name: <br/> </div>
 
     <div id="starter" class="starter">
-        <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up">Start</div>
+        <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up to your hand">Start</div>
     </div>
 
 
@@ -613,7 +622,7 @@ $(document).ready(function() {
     </div>
 
     <div id="mesa" class="cardBlock mesa" title="Drag selected cards here. Double click to collect cards to your hand">
-      Table (<span id="mesaCardsCount">-</span>)
+      <div style="z-index:31;" id="collectMesa" title="Clic here to collect the table cards">Table</div> (<span id="mesaCardsCount">-</span>)
       <div id="mesaCards">
 
       </div>
