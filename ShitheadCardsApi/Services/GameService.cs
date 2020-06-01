@@ -16,6 +16,7 @@ namespace ShitheadCardsApi
 
         private ShitheadDBContext _ctx;
         private IShitheadService _shitheadService;
+        private readonly double GAME_AGE = -2;     // 2 hours
 
         public GameService(ShitheadDBContext ctx, IShitheadService shitheadService)
         {
@@ -65,7 +66,7 @@ namespace ShitheadCardsApi
 
         public Game JoinGame(Game game, string playerName)
         {
-            if (game.Status == StatusEnum.OUT || DateTime.Now.AddHours(-2).CompareTo(game.DateCreated) == 1)
+            if (game.Status == StatusEnum.OUT || DateTime.Now.AddHours(GAME_AGE).CompareTo(game.DateCreated) > 0)
             {
                 //reset game if already finished
                 List<string> cards = _shitheadService.CreateDeck();
@@ -106,16 +107,6 @@ namespace ShitheadCardsApi
             }
 
             return game;
-        }
-
-
-        public Game GetGame(string name)
-        {
-            string lowName = name.ToLower();
-            GameDbModel gameDbModel = _ctx.Find<GameDbModel>(lowName);
-            if (gameDbModel == null)
-                return null;
-            return Deserialize(gameDbModel);
         }
 
         public Game SwitchPlayerCards(string gameName, string playerId, string openCard, string handCard)
@@ -343,6 +334,15 @@ namespace ShitheadCardsApi
             return locker.GetOrAdd(lowGameName, new Object());
         }
 
+        public Game GetGame(string name)
+        {
+            string lowName = name.ToLower();
+            GameDbModel gameDbModel = _ctx.Find<GameDbModel>(lowName);
+            if (gameDbModel == null)
+                return null;
+            return Deserialize(gameDbModel);
+        }
+
         private void SaveGame(Game game)
         {
             GameDbModel gameDbModel = _ctx.Find<GameDbModel>(game.Name);
@@ -404,6 +404,19 @@ namespace ShitheadCardsApi
             if (game.Status != expectedStatus)
                 throw new GameException($"Game not in {expectedStatus} mode: {game.Status}");
 
+        }
+
+        public List<Game> List(string nameFilter)
+        {
+            var games = _ctx.ShitheadGames.ToList().Select(gdm => Deserialize(gdm))
+                .Where(g => g.Status == StatusEnum.SETUP &&
+                            DateTime.Now.AddHours(GAME_AGE).CompareTo(g.DateCreated) <= 0 &&
+                            g.Players.Count < 5);
+
+            if (!String.IsNullOrEmpty(nameFilter))
+                games = games.Where(g => g.Name.ToLower().Contains(nameFilter.ToLower()));
+
+            return games.ToList();
         }
     }
 }

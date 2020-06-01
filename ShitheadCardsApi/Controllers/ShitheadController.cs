@@ -4,7 +4,8 @@ using ShitheadCardsApi.Interfaces;
 using ShitheadCardsApi.Models;
 using ShitheadCardsApi.ViewModels;
 using Microsoft.AspNetCore.Http;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ShitheadCardsApi.Controllers
 {
@@ -148,6 +149,25 @@ namespace ShitheadCardsApi.Controllers
             {
                 Game game = _gameService.DiscardPlayerCards(gameName, playerId, cards);
                 return Ok(new GameResponse(game, playerId));
+            }
+            catch (GameException ex)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// List games available for joining
+        /// </summary>
+        /// <param name="gameName">Optional Game Name filter</param>
+        /// <returns>Current list of games for joining</returns>
+        [HttpGet("game")]
+        public IActionResult ListGames(string gameName)
+        {
+            try
+            {
+                List<Game> games = _gameService.List(gameName);
+                return Ok(games.Select(g => new ListGameResponse(g)));
             }
             catch (GameException ex)
             {
