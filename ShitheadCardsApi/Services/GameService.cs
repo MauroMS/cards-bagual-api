@@ -351,7 +351,7 @@ namespace ShitheadCardsApi
             {
                 gameDbModel = new GameDbModel()
                 {
-                    Name = game.Name,
+                    Name = game.Name.ToLower(),
                     GameJson = Serialize(game)
                 };
                 _ctx.ShitheadGames.Add(gameDbModel);

@@ -299,7 +299,7 @@ $(document).ready(function() {
         document.getElementById("myname").innerHTML = playerNameInput;
         document.getElementById("gameNameDisplay").innerHTML += gameNameInput;
 
-        gameName = encodeURIComponent(gameNameInput);
+        gameName = encodeURIComponent(gameNameInput.toLowerCase());
         playerName = encodeURIComponent(playerNameInput);
 
         fetch(baseURL + '/game/' + gameName + '/player/' + playerName).then(function(response) {
@@ -482,11 +482,18 @@ $(document).ready(function() {
    $('#commence').click(function() {
          var game = document.getElementById("gameName").value;
          var player = document.getElementById("playerName").value;
+
+         $('#dataForm')[0].reportValidity();
+
+
+         if (game.trim() == "" || player.trim() == "") {
+              return;
+         }
          createGameAndPlayer(game, player);
     });
 
 
-   function writeResponseValidationError(response) {
+   function writeResponseError(response) {
       errorCount++;
 
       if (response.status == 422) {
@@ -547,8 +554,7 @@ $(document).ready(function() {
     }
 
    $(document).on("dragstart", "img.mycarta", function (ev) {
-       // debugger;
-   //     ev.preventDefault();
+
 
         var dragCard = $(ev.currentTarget);
 
@@ -654,15 +660,15 @@ $(document).ready(function() {
           Choose your player name too which will be visible to the other players 
       </p>
       <br/> <br/>
-        <div style="width: 50%; left: 30%; position: absolute;">
+        <form style="width: 50%; left: 30%; position: absolute;" id="dataForm">
           <label for="gameName"> Game Name </label> 
-          <input type="text" list="gameNames" name="gameName" id="gameName" maxlength="15" />
+          <input type="text" list="gameNames" name="gameName" id="gameName" maxlength="15" required="required" placeholder="Enter the game name" />
           <datalist id="gameNames">
  
           </datalist>  
           <br/><br/><br/>
           <label for="playerName"> Player Name  </label> 
-          <input type="text" name="playerName"  maxlength="15" id="playerName"/> 
+          <input type="text" name="playerName"  maxlength="15" id="playerName" required="required" placeholder="Enter the player name" /> 
           <br/><br/>
           <div id="commence" class="commence button">
 
@@ -671,7 +677,7 @@ $(document).ready(function() {
 
           </div>
          
-        </div>  
+        </form>  
 
     </div> 
     <div id="title">
