@@ -15,9 +15,7 @@
 
   <script>
 $(document).ready(function() {
-    function randomIntFromInterval(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
+
 
     function getValidPrompt(msg, validReg){
         var valid = false;
@@ -36,11 +34,10 @@ $(document).ready(function() {
 
     let imageBackURL = "https://cdn.shopify.com/s/files/1/0200/7616/products/cardback.png?v=1523371937";
    
-    let gameName = getValidPrompt("Please enter the game name, no spaces allowed, max 15 chars", true);
+    let gameName = ""; // getValidPrompt("Please enter the game name, no spaces allowed, max 15 chars", true);
 
-    let playerName = getValidPrompt("Please enter your player name, no spaces allowed, max 15 chars", true);
+    let playerName = ""; // getValidPrompt("Please enter your player name, no spaces allowed, max 15 chars", true);
   
-    document.getElementById("myname").innerHTML = playerName;  
 
     let myTurn = false;
 
@@ -49,6 +46,35 @@ $(document).ready(function() {
     let startMode = true;
 
     let errorCount = 0;
+
+
+    //  init alles
+    let refresher = null;
+
+    gameNamesDataList();
+    let gameNamesRefresher = setInterval(gameNamesDataList, 2000);;
+
+    function gameNamesDataList() {
+          fetch(baseURL + '/game').then(function(response) {
+          
+          if (response.status != 200) {
+              writeResponseError(response);
+              return;
+          }
+
+          response.json().then(function(games) {
+            
+              var options = games.map(function(game) {
+                 return `<option value="${game.name}">Created by '${game.createdBy}' - ${game.playersCount} Players</option>`;
+              }).join("");
+
+              
+              if (document.getElementById("gameNames").innerHTML != options){
+                 document.getElementById("gameNames").innerHTML = options;  
+               }
+          });
+        });
+    }
 
     function getImageUrl(card) {
       return imageURL.replace("XX",card);
@@ -90,11 +116,12 @@ $(document).ready(function() {
 
     function buildCardImages(pileList, classes, draggable, lastDownCard) {
         var cardsList = "";
+        var threshold = 15;
         for (var i = 0; i < pileList.length; i++) { 
             var styleCss;
 
-            if ( i >= 18) {
-               styleCss = `grid-column-start: ${i+1-18};grid-column-end: ${i+3-18};grid-row-start:2;grid-row-end:4;`;
+            if ( i >= threshold) {
+               styleCss = `grid-column-start: ${i+1-threshold};grid-column-end: ${i+3-threshold};grid-row-start:2;grid-row-end:4;`;
             } else {
                styleCss = `grid-column-start: ${i+1};grid-column-end: ${i+3}`;
             }
@@ -268,7 +295,13 @@ $(document).ready(function() {
 
     }
 
-    function createGameAndPlayer(){
+    function createGameAndPlayer(gameNameInput, playerNameInput){
+        document.getElementById("myname").innerHTML = playerNameInput;
+        document.getElementById("gameNameDisplay").innerHTML += gameNameInput;
+
+        gameName = encodeURIComponent(gameNameInput);
+        playerName = encodeURIComponent(playerNameInput);
+
         fetch(baseURL + '/game/' + gameName + '/player/' + playerName).then(function(response) {
 
             if (response.status != 200) {
@@ -283,11 +316,14 @@ $(document).ready(function() {
             }
 
             response.json().then(function(shAPI) {
+              clearInterval(gameNamesRefresher);
+
               playerId = shAPI.playerId;
               console.log("From SHAPI: me = " + playerId);
-              document.getElementById("gameName").innerHTML += shAPI.name;
+            
               refreshInterval();
               refresher = setInterval(refreshInterval, 4000);
+               $('#gameStarter').addClass("hidden");
             });
         });  
     }
@@ -442,6 +478,14 @@ $(document).ready(function() {
          discardSelectedCard();
     });
 
+
+   $('#commence').click(function() {
+         var game = document.getElementById("gameName").value;
+         var player = document.getElementById("playerName").value;
+         createGameAndPlayer(game, player);
+    });
+
+
    function writeResponseValidationError(response) {
       errorCount++;
 
@@ -580,11 +624,6 @@ $(document).ready(function() {
         }
     }
 
-    //  init alles
-    createGameAndPlayer();
-
-    let refresher = null;
-
 
 });
 
@@ -594,16 +633,62 @@ $(document).ready(function() {
       
     
 <body id="body">
-    <div id="title"> <a href="https://github.com/MauroMS/shithead-cards" target=”_blank”>Shithead <BR/>
-    Multiplayer</a> </div>
-    <div id="gameName">Game name: <br/> </div>
+    <div id="gameStarter">
+        <h1><img draggable="false" style="width:5%;float:right" src="./xitiredi_files/shithead.png"/>Shithead Multiplayer</h1>
+      <p>
+        Welcome to the unique Shithead Multiplayer Online game. Here you can play online with your friends and/or enemies, up to
+        <b>5 players</b> playing together. 
+      </p>
+      <p>
+        The game uses a set of rules for special cards:  three jokers that can go on any card (
+          "2" resets the table, any card can go on top of "2"; 
+          "10" burns the table; 
+          "3" is transparent, it keeps the value of the card below ).  Plus the two special cards "7" which requires a card lower or equal than "7"; 
+          and finally "8" which skips the next player.  Furthermore, the table is burned when four consecutive same number cards are set on the table.
+      </p>
+      <p>
+          During setup stage, you may switch the cards in your hand with your cards on the table. Once you click Start, it is all settled.
+      </p>
+      <p>
+          To play the game, choose an unique "game name" and share it with your friends ( You all must use the same game name to join the same table ). 
+          Choose your player name too which will be visible to the other players 
+      </p>
+      <br/> <br/>
+        <div style="width: 50%; left: 30%; position: absolute;">
+          <label for="gameName"> Game Name </label> 
+          <input type="text" list="gameNames" name="gameName" id="gameName" maxlength="15" />
+          <datalist id="gameNames">
+ 
+          </datalist>  
+          <br/><br/><br/>
+          <label for="playerName"> Player Name  </label> 
+          <input type="text" name="playerName"  maxlength="15" id="playerName"/> 
+          <br/><br/>
+          <div id="commence" class="commence button">
 
-    <div id="starter" class="starter">
+               <img draggable="false"  src="./xitiredi_files/shithead.png" style="width: 20%"/>
+               <div id="commenceGame" title="Start your game">Join Game</div>
+
+          </div>
+         
+        </div>  
+
+    </div> 
+    <div id="title">
+      <img draggable="false" style="width:25%;float:right" src="./xitiredi_files/shithead.png"/>
+      <a href="https://github.com/MauroMS/shithead-cards" style="float:right"  target=”_blank”>
+         Shithead <BR/>
+         Multiplayer
+      </a> 
+    </div>
+    <div id="gameNameDisplay">Game name: <br/> </div>
+
+    <div id="starter" class="starter button">
         <div style="z-index:31;" id="startGame" title="Until start you can switch the cards facing up to your hand">Start</div>
     </div>
 
 
-    <div id="discard" class="discard hidden">
+    <div id="discard" class="discard hidden button">
         <div style="z-index:31;" id="discardSelected" title="Clic here to throw the selected card(s)">Throw</div>
     </div>
 

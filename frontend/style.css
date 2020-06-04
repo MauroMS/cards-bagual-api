@@ -7,7 +7,7 @@
 
 body {
   width:95vw;
-  height:95vh;
+  height:92vh;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77a358+0,156d23+94 */
   background:
   radial-gradient(black 15%, transparent 16%) 0 0,
@@ -47,14 +47,12 @@ body {
   display: none !important;
 }
 
-.starter {
+.button {
   text-decoration: none;
   cursor: pointer;
   z-index: 100;
   color:white;
   position: absolute;
-  top: 70%;
-  left: 60%;
   background-color: transparent;
   font-size: 25px;
   transform: rotate(-4deg);
@@ -64,22 +62,41 @@ body {
   -webkit-text-fill-color: yellow;
 }
 
-
-.discard {
+label {
   text-decoration: none;
   cursor: pointer;
   z-index: 100;
   color:white;
-  position: absolute;
-  top: 70%;
-  left: 60%;
   background-color: transparent;
-  font-size: 25px;
+  font-size: 20px;
   transform: rotate(-4deg);
   font-family: 'Patua One', cursive;
   text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
   -webkit-text-stroke: 0.4px #000000;
   -webkit-text-fill-color: yellow;
+}
+
+h1 {
+      color: #f1c289;
+}
+.starter {
+  top: 70%;
+  left: 60%;
+}
+
+.discard {
+  top: 70%;
+  left: 60%;
+}
+
+.commence {
+  position: relative;
+  float: left;
+}
+
+#commenceGame {
+    display: inline;
+    float: left;
 }
 
 #collectMesa {
@@ -101,13 +118,10 @@ body {
   transform: scale(1.1);
 }
 
-.starter:hover {
+.button:hover {
   transform: scale(1.2);
 }
 
-.discard:hover {
-  transform: scale(1.2);
-}
 
 .deck {
   grid-area: deck;
@@ -216,9 +230,23 @@ body {
     grid-area: title;
     color: #f1c289;
     justify-self: end;
+    display: block;
+    text-align: right;
+    float: right;
 }
 
-#gameName {
+#gameStarter {
+    position: absolute;
+    width: 96%;
+    height: 95%;
+    background-color: green;
+    z-index: 1000;
+    border: 3px dashed;
+    margin: -5px; 
+    color: beige;
+}
+
+#gameNameDisplay {
     font-size: x-large;
     grid-area: gameName;
     color: #f1c289;
@@ -253,6 +281,11 @@ IMG.carta {
 
 IMG.selected {
   border: solid 3px yellow;
+}
+
+
+IMG.lastDown {
+  border: solid 3px darkRed;
 }
 
 H1 {
