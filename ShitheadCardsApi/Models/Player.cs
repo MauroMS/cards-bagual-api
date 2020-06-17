@@ -19,6 +19,6 @@ namespace ShitheadCardsApi.Models
         public List<string> DownCards { get; set; }
         public List<string> OpenCards { get; set; }
         public StatusEnum Status { get; set; }
-        public bool bot { get; set; }
+        public bool Bot { get; set; }
     }
 }

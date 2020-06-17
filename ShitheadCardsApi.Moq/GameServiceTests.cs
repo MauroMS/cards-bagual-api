@@ -16,12 +16,14 @@ namespace ShitheadCardsApi.Moq
         private List<Player> players;
         private Mock<IShitheadService> shitheadService;
         private Mock<ShitheadDBContext> shitheadDbContext;
+        private Mock<IBotPlayerService> botPlayerService;
 
         public GameServiceTests()
         {
             shitheadDbContext = new Mock<ShitheadDBContext>();
             shitheadService = new Mock<IShitheadService>();
-            _sut = new GameService(shitheadDbContext.Object, shitheadService.Object);
+            botPlayerService = new Mock<IBotPlayerService>();
+            _sut = new GameService(shitheadDbContext.Object, shitheadService.Object, botPlayerService.Object);
         }
 
         [Fact]

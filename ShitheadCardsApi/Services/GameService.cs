@@ -132,7 +132,7 @@ namespace ShitheadCardsApi
                     DownCards = playerCards.GetRange(0, 3),
                     OpenCards = playerCards.GetRange(3, 3),
                     InHandCards = playerCards.GetRange(6, 3),
-                    bot = isBot
+                    Bot = isBot
                 };
                 game.Players.Add(player);
             }
@@ -457,7 +457,7 @@ namespace ShitheadCardsApi
             var gamesWithBotToPlay = _ctx.ShitheadGames.ToList()
                 .Where(gdm => DateTime.Now.AddSeconds(GAME_UPDATE_BOT).CompareTo(gdm.LastUpdated) > 0)
                 .Select(gdm => Deserialize(gdm))
-                .Where(g => g.Players.Exists( p=> p.bot && p.Name.Equals(g.PlayerNameTurn)));
+                .Where(g => g.Players.Exists( p=> p.Bot && p.Name.Equals(g.PlayerNameTurn)));
 
             foreach (var game in gamesWithBotToPlay)
             {
