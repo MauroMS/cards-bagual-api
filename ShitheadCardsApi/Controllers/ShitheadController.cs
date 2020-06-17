@@ -50,6 +50,25 @@ namespace ShitheadCardsApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds a bot player to an existing game
+        /// </summary>
+        /// <param name="gameName">Game name</param>
+        /// <returns>Current game state</returns>
+        [HttpGet("game/{gameName}/bot")]
+        public IActionResult AddBotPLayer(string gameName)
+        {
+            try
+            {
+                Game game = _gameService.AddBotPlayer(gameName);
+                return Ok(new AddBotPlayerResponse(game));
+            }
+            catch (GameException ex)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Get current state of the game, with the data related to playerId

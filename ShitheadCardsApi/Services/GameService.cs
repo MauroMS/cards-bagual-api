@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ShitheadCardsApi
 {
@@ -16,12 +18,15 @@ namespace ShitheadCardsApi
 
         private ShitheadDBContext _ctx;
         private IShitheadService _shitheadService;
+        private IBotPlayerService _botPlayerService;
         private readonly double GAME_AGE = -2;     // 2 hours
+        private readonly double GAME_UPDATE_BOT = -10; // 10 seconds
 
-        public GameService(ShitheadDBContext ctx, IShitheadService shitheadService)
+        public GameService(ShitheadDBContext ctx, IShitheadService shitheadService, IBotPlayerService botPlayerService)
         {
             _ctx = ctx;
             _shitheadService = shitheadService;
+            _botPlayerService = botPlayerService;
         }
 
         public Game CreateOrJoinGame(string gameName, string playerName)
@@ -37,7 +42,32 @@ namespace ShitheadCardsApi
                     game = CreateGame(gameName);
                 }
 
-                game = JoinGame(game, playerName);
+                game = JoinGame(game, playerName, false);
+
+                SaveGame(game);
+
+                return game;
+            }
+        }
+
+        public Game AddBotPlayer(string gameName)
+        {
+            object gameLock = GetGameLock(gameName);
+
+            lock (gameLock)
+            {
+                Game game = GetGame(gameName);
+
+                if (game == null)
+                {
+                    throw new GameException("Game not found");
+                }
+
+                string playerName = _botPlayerService.GeneratePlayerName(game);
+
+                game = JoinGame(game, playerName, true);
+
+                _botPlayerService.InitializePlayer(game, playerName);
 
                 SaveGame(game);
 
@@ -64,7 +94,7 @@ namespace ShitheadCardsApi
             return game;
         }
 
-        public Game JoinGame(Game game, string playerName)
+        public Game JoinGame(Game game, string playerName, bool isBot)
         {
             if (game.Status == StatusEnum.OUT || DateTime.Now.AddHours(GAME_AGE).CompareTo(game.DateCreated) > 0)
             {
@@ -102,6 +132,7 @@ namespace ShitheadCardsApi
                     DownCards = playerCards.GetRange(0, 3),
                     OpenCards = playerCards.GetRange(3, 3),
                     InHandCards = playerCards.GetRange(6, 3),
+                    bot = isBot
                 };
                 game.Players.Add(player);
             }
@@ -351,6 +382,7 @@ namespace ShitheadCardsApi
             {
                 gameDbModel = new GameDbModel()
                 {
+                    LastUpdated = DateTime.Now,
                     Name = game.Name.ToLower(),
                     GameJson = Serialize(game)
                 };
@@ -358,6 +390,7 @@ namespace ShitheadCardsApi
             }
             else
             {
+                gameDbModel.LastUpdated = DateTime.Now;
                 gameDbModel.GameJson = Serialize(game);
             }
 
@@ -417,6 +450,38 @@ namespace ShitheadCardsApi
                 games = games.Where(g => g.Name.ToLower().Contains(nameFilter.ToLower()));
 
             return games.ToList();
+        }
+
+        public void PlayBotTurns()
+        {
+            var gamesWithBotToPlay = _ctx.ShitheadGames.ToList()
+                .Where(gdm => DateTime.Now.AddSeconds(GAME_UPDATE_BOT).CompareTo(gdm.LastUpdated) > 0)
+                .Select(gdm => Deserialize(gdm))
+                .Where(g => g.Players.Exists( p=> p.bot && p.Name.Equals(g.PlayerNameTurn)));
+
+            foreach (var game in gamesWithBotToPlay)
+            {
+                object gameLock = GetGameLock(game.Name);
+
+                string cardToPlay = null;
+                lock (gameLock)
+                {
+                    // perform play logic
+                    cardToPlay = _botPlayerService.PlayBotPlayerTurn(game);
+                    
+                }
+
+                string playerId = game.Players.FirstOrDefault(p => p.Name.Equals(game.PlayerNameTurn)).Id;
+
+                if (cardToPlay == null)
+                {
+                    MoveTableCardsToPlayer(game.Name, playerId);
+                }
+                else
+                {
+                    DiscardPlayerCards(game.Name, playerId, cardToPlay);
+                }
+            }
         }
     }
 }

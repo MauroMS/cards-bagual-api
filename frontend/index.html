@@ -10,7 +10,7 @@
   <title>ShitHead Multiplayer Online</title>
   <link rel="stylesheet" type="text/css" href="style.css?rnd=132"/>
   <link href="./xitiredi_files/font.css" rel="stylesheet"/>
-
+  <link rel="icon" href="./xitiredi_files/shithead.png"/>
   <script src="./xitiredi_files/jquery.min.js"></script>
 
   <script>
@@ -266,12 +266,18 @@ $(document).ready(function() {
     function refreshMyCards(mySelf){
 
        // for both hands and open piles 
+       var hasHandCard = false;
+       var hasOpenCard = false;
+
        for (var a=0; a<2; a++) {
             var elementContainer = "myCardsUp";
             var pile = "openCards";
-            if (a == 0) {
+            if (a == 1) {
                elementContainer = "myCards";
                pile = "handCards";
+               hasHandCard = mySelf[pile].length > 0;
+            } else {
+               hasOpenCard = mySelf[pile].length > 0;
             }
 
              // compare incoming data to existent
@@ -285,6 +291,11 @@ $(document).ready(function() {
                 document.getElementById(elementContainer).innerHTML = buildCardImages(mySelf[pile], "mycarta", true, mySelf.lastDownCard);
             }
         }
+
+        $("#myCards").css({zIndex: (hasHandCard?103:100)});
+        $("#myCardsUp").css({zIndex: (hasHandCard?100:(hasOpenCard?102:100))});
+        $("#myCardsDown").css({zIndex: ((hasHandCard||hasOpenCard)?100:101)});
+
         while ($("#myCardsDown IMG").length > mySelf.downCount) {
               ($("#myCardsDown IMG")[0]).remove();
         }
@@ -534,24 +545,6 @@ $(document).ready(function() {
         grabMesaCards();
    });
 
-
-  function orderCards(container){
-      if (container == "myCards") {
-           $("#myCards IMG").sort(function(a, b){
-                 var aVal = getNumericCardValue(getCardValue(a.src));
-                 var bVal = getNumericCardValue(getCardValue(b.src));
-                 return aVal - bVal;
-           }).each(function( index ) {
-              $( this ).css({left: (index*20 + 20)});
-           }).appendTo("#myCards");
-
-      } else {
-        $("#"+ container + " IMG").each(function( index ) {
-          $( this ).css({left: (index*20 + 20)});
-        });        
-      }
- 
-    }
 
    $(document).on("dragstart", "img.mycarta", function (ev) {
 

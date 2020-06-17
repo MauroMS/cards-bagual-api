@@ -11,6 +11,8 @@ namespace ShitheadCardsApi.Models
         [Key]
         public string Name { get; set; }
 
+        public DateTime LastUpdated { get; set; }
+
         public string GameJson { get; set; }
     }
 }

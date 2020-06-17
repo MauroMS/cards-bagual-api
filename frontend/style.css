@@ -199,7 +199,7 @@ h1 {
 #myCards {
    display: grid;  
    grid-area: 3 / 1 / 5 / 1; 
-   grid-auto-columns: min-content;
+   grid-auto-columns: min-content;      
 }
 
 #playerCards {
@@ -280,12 +280,12 @@ IMG.carta {
 
 
 IMG.selected {
-  border: solid 3px yellow;
+  border: solid 3px yellow !important;
 }
 
 
 IMG.lastDown {
-  border: solid 3px darkRed;
+  border: dashed 2px #e52424;
 }
 
 H1 {
