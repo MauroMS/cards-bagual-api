@@ -42,8 +42,8 @@ namespace ShitheadCardsApi
 
             handAndOpen.Sort(CompareBestCard);
 
-            botPlayer.OpenCards = handAndOpen.GetRange(0, 3);
-            botPlayer.InHandCards = handAndOpen.GetRange(3, 3);
+            botPlayer.OpenCards = handAndOpen.GetRange(3, 3);
+            botPlayer.InHandCards = handAndOpen.GetRange(0, 3);
 
             game.Players.First(p => p.Name == playerName).Status = StatusEnum.PLAYING;
         }
@@ -60,8 +60,96 @@ namespace ShitheadCardsApi
         {
             Player botPlayer = game.Players.Where(p => p.Name.Equals(game.PlayerNameTurn)).First();
 
+            List<string> cardsToPlay;
+
+            if (botPlayer.InHandCards.Count > 0)
+            {
+                cardsToPlay = botPlayer.InHandCards;
+            }
+            else if (botPlayer.OpenCards.Count > 0)
+            {
+                cardsToPlay = botPlayer.OpenCards;
+            }
+            else if (botPlayer.DownCards.Count > 0)
+            { 
+                return "down";
+            }
+            else
+            {
+                return null;
+            }
+
+            string lastTableCard = _shitheadService.GetLastTableCardNotThree(game.TableCards);
+
+            // no card on table
+            if (lastTableCard == null)
+            {
+                int playLowest = _shitheadService.GetPlayerLowestCard(cardsToPlay);
+                return JoinThrow(cardsToPlay, playLowest);
+            }
+
+            int lastTableCardVal = _shitheadService.GetNumericValueFromCard(lastTableCard);
+
+            // 2 on table
+            if (lastTableCardVal == 2)
+            {
+                int playLowest = _shitheadService.GetPlayerLowestCard(cardsToPlay);
+                return JoinThrow(cardsToPlay, playLowest);
+            }
+
+            // same card if not 3 or 10
+            if (lastTableCardVal != 3 && lastTableCardVal != 10 &&
+                cardsToPlay.Exists(c => _shitheadService.GetNumericValueFromCard(c) == lastTableCardVal))
+            {
+                return JoinThrow(cardsToPlay, lastTableCardVal);
+            }
+
+            // 7 on table
+            if (lastTableCardVal == 7)
+            {
+                int playLowest = _shitheadService.GetPlayerLowestCard(cardsToPlay);
+                if (playLowest <= 7 && playLowest > 0)
+                {
+                    return JoinThrow(cardsToPlay, playLowest);
+                }
+            }
+            // higher than on table
+            else 
+            {
+                int playLowestHigherThan = _shitheadService.GetPlayerLowestCard(cardsToPlay, lastTableCardVal);
+                if (playLowestHigherThan > 0 && playLowestHigherThan != 2 && playLowestHigherThan != 3 && playLowestHigherThan != 10)
+                {
+                    return JoinThrow(cardsToPlay, playLowestHigherThan);
+                }
+            }
+
+            // check 3, if existent throw only 1
+            if (cardsToPlay.Exists(c => _shitheadService.GetNumericValueFromCard(c) == 3))
+            {
+                return cardsToPlay.First(c => _shitheadService.GetNumericValueFromCard(c) == 3);
+            }
+
+            // check 2, if existent throw only 1
+            if (cardsToPlay.Exists(c => _shitheadService.GetNumericValueFromCard(c) == 2))
+            {
+                return cardsToPlay.First(c => _shitheadService.GetNumericValueFromCard(c) == 2);
+            }
+
+            // check 10, if existent throw only 1
+            if (cardsToPlay.Exists(c => _shitheadService.GetNumericValueFromCard(c) == 10))
+            {
+                return cardsToPlay.First(c => _shitheadService.GetNumericValueFromCard(c) == 10);
+            }
+
+            // can't put anything, return null to pick up the table
             return null;
         }
 
+        public string JoinThrow(List<string> cardsToPlay, int cardVal)
+        {
+            return string.Join(",", cardsToPlay.Where(c => _shitheadService.GetNumericValueFromCard(c) == cardVal));
+        }
     }
+
+  
 }

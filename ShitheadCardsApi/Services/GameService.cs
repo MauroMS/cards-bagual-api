@@ -19,8 +19,8 @@ namespace ShitheadCardsApi
         private ShitheadDBContext _ctx;
         private IShitheadService _shitheadService;
         private IBotPlayerService _botPlayerService;
-        private readonly double GAME_AGE = -2;     // 2 hours
-        private readonly double GAME_UPDATE_BOT = -10; // 10 seconds
+        private readonly double GAME_AGE = -2;        // 2 hours
+        private readonly double GAME_UPDATE_BOT = -4; // 4 seconds
 
         public GameService(ShitheadDBContext ctx, IShitheadService shitheadService, IBotPlayerService botPlayerService)
         {
@@ -457,7 +457,8 @@ namespace ShitheadCardsApi
             var gamesWithBotToPlay = _ctx.ShitheadGames.ToList()
                 .Where(gdm => DateTime.Now.AddSeconds(GAME_UPDATE_BOT).CompareTo(gdm.LastUpdated) > 0)
                 .Select(gdm => Deserialize(gdm))
-                .Where(g => g.Players.Exists( p=> p.Bot && p.Name.Equals(g.PlayerNameTurn)));
+                .Where(g => g.Status == StatusEnum.PLAYING && 
+                            g.Players.Exists( p=> p.Bot && p.Name.Equals(g.PlayerNameTurn)));
 
             foreach (var game in gamesWithBotToPlay)
             {

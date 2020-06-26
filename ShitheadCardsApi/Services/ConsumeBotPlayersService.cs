@@ -21,7 +21,7 @@ namespace ShitheadCardsApi
         public Task StartAsync(CancellationToken cancellationToken)
         {
             var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromSeconds(15);
+            var periodTimeSpan = TimeSpan.FromSeconds(5);
 
             timer = new Timer(DoWork, null, startTimeSpan, periodTimeSpan);
 

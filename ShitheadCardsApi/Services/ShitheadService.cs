@@ -37,9 +37,12 @@ namespace ShitheadCardsApi
             return starterPlayer.Key;
         }
 
-        private int GetPlayerLowestCard(List<string> cards)
+        public int GetPlayerLowestCard(List<string> cards, int minVal = 4)
         {
-            return cards.Select(card => GetNumericValue(GetCardNumber(card))).Where(cardValue => cardValue >= 4).Min();
+            var cardNums = cards.Select(card => GetNumericValue(GetCardNumber(card))).Where(cardValue => cardValue >= minVal);
+            if (cardNums.Count() == 0)
+                return -1;
+            return cardNums.Min();
         }
 
         public List<string> CreateDeck()
@@ -60,7 +63,7 @@ namespace ShitheadCardsApi
 
         public DiscardResult EvaluateCardsOnTable(List<string> cardsToBePlayed, List<string> tableCards)
         {
-            string lastTableCardNotThree = tableCards.FindLast(tc => GetCardNumber(tc) != "3");
+            string lastTableCardNotThree = GetLastTableCardNotThree(tableCards);
 
             if (tableCards.Count == 0 || lastTableCardNotThree == null)
             {
@@ -98,7 +101,12 @@ namespace ShitheadCardsApi
             return DiscardResult.Ok;
         }
 
-        private bool CanCardGoOn(string cardNumber, string lastTableCardNumber)
+        public string GetLastTableCardNotThree(List<string> tableCards)
+        {
+            return tableCards.FindLast(tc => GetCardNumber(tc) != "3");
+        }
+
+        public bool CanCardGoOn(string cardNumber, string lastTableCardNumber)
         {
             if (lastTableCardNumber == null)
             {
@@ -131,6 +139,11 @@ namespace ShitheadCardsApi
         public static string GetCardNumber(string card)
         {
             return card.Substring(0,1);
+        }
+
+        public int GetNumericValueFromCard(string card)
+        {
+            return GetNumericValue(GetCardNumber(card));
         }
 
         public string NextPlayerFrom(List<Player> players, string playerId, int step)
