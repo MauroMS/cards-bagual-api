@@ -85,7 +85,8 @@ namespace ShitheadCardsApi
             if (lastTableCard == null)
             {
                 int playLowest = _shitheadService.GetPlayerLowestCard(cardsToPlay);
-                return JoinThrow(cardsToPlay, playLowest);
+                if (playLowest > 0 )
+                    return JoinThrow(cardsToPlay, playLowest);
             }
 
             int lastTableCardVal = _shitheadService.GetNumericValueFromCard(lastTableCard);
@@ -94,7 +95,8 @@ namespace ShitheadCardsApi
             if (lastTableCardVal == 2)
             {
                 int playLowest = _shitheadService.GetPlayerLowestCard(cardsToPlay);
-                return JoinThrow(cardsToPlay, playLowest);
+                if (playLowest > 0)
+                    return JoinThrow(cardsToPlay, playLowest);
             }
 
             // same card if not 3 or 10
