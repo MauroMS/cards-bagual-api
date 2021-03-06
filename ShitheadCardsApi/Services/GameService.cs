@@ -439,10 +439,12 @@ namespace ShitheadCardsApi
 
         }
 
-        public List<Game> List(string nameFilter)
+        public List<Game> List(string nameFilter, bool filterOut = true)
         {
-            var games = _ctx.ShitheadGames.ToList().Select(gdm => Deserialize(gdm))
-                .Where(g => g.Status == StatusEnum.SETUP &&
+            var games = _ctx.ShitheadGames.ToList().Select(gdm => Deserialize(gdm));
+
+            if (filterOut)
+                games = games.Where(g => g.Status == StatusEnum.SETUP &&
                             DateTime.Now.AddHours(GAME_AGE).CompareTo(g.DateCreated) <= 0 &&
                             g.Players.Count < 5);
 
@@ -484,5 +486,6 @@ namespace ShitheadCardsApi
                 }
             }
         }
+
     }
 }

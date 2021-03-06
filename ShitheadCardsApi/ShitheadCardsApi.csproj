@@ -9,13 +9,24 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.4" />
-        <PackageReference Include="System.Text.Json" Version="4.7.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.3" />
+        <PackageReference Include="System.Text.Json" Version="5.0.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
+        <PackageReference Include="Grpc.Core" Version="2.36.1" />
+        <PackageReference Include="Grpc.Tools" Version="2.36.1">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Google.Protobuf" Version="3.15.4" />
+        <PackageReference Include="Snappy.Standard" Version="0.2.0" />
     </ItemGroup>
     
     <ItemGroup>
         <Folder Include="ViewModels\" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Protobuf Include="Protos\prometheus.proto" GrpcServices="Client" />
+    </ItemGroup>
 </Project>

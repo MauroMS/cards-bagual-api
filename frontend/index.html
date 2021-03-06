@@ -85,7 +85,17 @@ $(document).ready(function() {
     function initializePlayer(playerIndex, player) {
         var pIndex = "p" + (playerIndex);
 
-        $( "#" + pIndex ).removeClass( "hidden" )
+        $( "#" + pIndex ).removeClass( "hidden" );
+
+        if (player.status == "SETUP") {
+
+          if( ! ( $( "#" + pIndex ).hasClass("playerOnSetup")) ) {
+              $( "#" + pIndex ).addClass( "playerOnSetup" );
+          }
+
+        } else {
+          $( "#" + pIndex ).removeClass( "playerOnSetup" );
+        }
 
         document.getElementById(pIndex + "name").innerHTML = player.name;
 
@@ -141,13 +151,20 @@ $(document).ready(function() {
     // DONE
     function checkIfIAmShithead(gameStatus, player) {
 
-      if (gameStatus == "OUT" && player.status == "PLAYING") {
-          clearInterval(refresher);
+      if (gameStatus == "OUT") {
+        clearInterval(refresher);
+
+        if (player.status == "PLAYING") {
 
           document.getElementById("myCardsDown").innerHTML = buildCardImages(player.downCards, "mycarta", false);
          
           document.getElementById("shitheadAudio").play();
           alert ("You are the Shithead!!!");
+
+        } else {
+          alert ("The game is over!!!");
+          //location.reload();
+        }
       }
     }
 
@@ -204,8 +221,8 @@ $(document).ready(function() {
               ($("#p" + playerIndex + "CardsDown IMG")[0]).remove();
         }
 
-        var cntAllPlayerCards = ( player.downCount + player.handCount + player.openCards.length); 
-        document.getElementById("p" + playerIndex + "Count").innerHTML = cntAllPlayerCards;
+        var cntHandPlayerCards = player.handCount; 
+        document.getElementById("p" + playerIndex + "Count").innerHTML = cntHandPlayerCards;
 
 
         if (player.status == "OUT") {
@@ -542,6 +559,12 @@ $(document).ready(function() {
         grabMesaCards();
    });
 
+   $(document).on("dblclick", "#shitheadIcon" , function() {
+        // add a bot player
+        fetch(baseURL + '/game/' + gameName +  "/bot");
+   });
+
+
    $('#collectMesa').click(function() {
         grabMesaCards();
    });
@@ -675,7 +698,7 @@ $(document).ready(function() {
 
     </div> 
     <div id="title">
-      <img draggable="false" style="width:25%;float:right" src="./xitiredi_files/shithead.png"/>
+      <img draggable="false" style="width:25%;float:right" src="./xitiredi_files/shithead.png" id="shitheadIcon"/>
       <a href="https://github.com/MauroMS/shithead-cards" style="float:right"  target=”_blank”>
          Shithead <BR/>
          Multiplayer

@@ -14,6 +14,7 @@ namespace ShitheadCardsApi.Controllers
     public class ShitheadController : ControllerBase
     {
 
+
         private readonly ILogger<ShitheadController> _logger;
         private readonly IGameService _gameService;
 
@@ -26,6 +27,7 @@ namespace ShitheadCardsApi.Controllers
         [HttpGet("")]
         public IActionResult Get()
         {
+
             return Ok("OK");
         }
 
