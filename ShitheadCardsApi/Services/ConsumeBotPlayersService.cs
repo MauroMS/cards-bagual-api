@@ -14,16 +14,19 @@ using System.Net.Http.Headers;
 using Snappy;
 using System.Collections.Generic;
 using ShitheadCardsApi.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace ShitheadCardsApi
 {
     public class ConsumeBotPlayersService : IHostedService
     {
         private Timer timer;
+        private IConfiguration Configuration;
         public IServiceProvider Services { get; }
 
-        public ConsumeBotPlayersService(IServiceProvider services)
+        public ConsumeBotPlayersService(IServiceProvider services, IConfiguration configuration)
         {
+            Configuration = configuration;
             Services = services;
         }
 
@@ -118,8 +121,8 @@ namespace ShitheadCardsApi
         private void SendMetricRequest(WriteRequest req)
         {
 
-            var url = "";
-            var token = "";
+            var url = Configuration.GetValue<string>("prom_write_url");
+            var token = Configuration.GetValue<string>("prom_write_token");
 
 
             if (! String.IsNullOrEmpty(url) )
