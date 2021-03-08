@@ -64,57 +64,75 @@ namespace ShitheadCardsApi
 
         private void monitorGames(List<Game> games)
         {
-            var cntSetup = games.FindAll(game => game.Status == StatusEnum.SETUP).Count;
+            try { 
+                var cntSetup = games.FindAll(game => game.Status == StatusEnum.SETUP).Count;
 
-            var cntPlaying = games.FindAll(game => game.Status == StatusEnum.PLAYING).Count;
+                var cntPlaying = games.FindAll(game => game.Status == StatusEnum.PLAYING).Count;
 
-            var cntOut = games.FindAll(game => game.Status == StatusEnum.OUT).Count;
+                var cntOut = games.FindAll(game => game.Status == StatusEnum.OUT).Count;
 
-            var timeNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            var req = new WriteRequest
-            {
-                Timeseries = {
-                    new TimeSeries {
-                        Samples = {
-                            new Sample {
-                                Value = cntSetup,
-                                Timestamp = timeNow
+                var timeNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            
+                var req = new WriteRequest
+                {
+                    Timeseries = {
+                        new TimeSeries {
+                            Samples = {
+                                new Sample {
+                                    Value = 1,
+                                    Timestamp = timeNow
+                                }
+                            },
+                            Labels = {
+                                new Label { Name = "__name__", Value = "sh_heartbeat" }
                             }
                         },
-                        Labels = {
-                            new Label { Name = "__name__", Value = "sh_game_count" },
-                            new Label { Name = "game_status", Value = "SETUP"}
-                        }
-                    },
-                    new TimeSeries {
-                        Samples = {
-                            new Sample {
-                                Value = cntPlaying,
-                                Timestamp = timeNow
+                        new TimeSeries {
+                            Samples = {
+                                new Sample {
+                                    Value = cntSetup,
+                                    Timestamp = timeNow
+                                }
+                            },
+                            Labels = {
+                                new Label { Name = "__name__", Value = "sh_game_count" },
+                                new Label { Name = "game_status", Value = "SETUP"}
                             }
                         },
-                        Labels = {
-                            new Label { Name = "__name__", Value = "sh_game_count" },
-                            new Label { Name = "game_status", Value = "PLAYING"}
-                        }
-                    },
-                    new TimeSeries {
-                        Samples = {
-                            new Sample {
-                                Value = cntOut,
-                                Timestamp = timeNow
+                        new TimeSeries {
+                            Samples = {
+                                new Sample {
+                                    Value = cntPlaying,
+                                    Timestamp = timeNow
+                                }
+                            },
+                            Labels = {
+                                new Label { Name = "__name__", Value = "sh_game_count" },
+                                new Label { Name = "game_status", Value = "PLAYING"}
                             }
                         },
-                        Labels = {
-                            new Label { Name = "__name__", Value = "sh_game_count" },
-                            new Label { Name = "game_status", Value = "OUT"}
+                        new TimeSeries {
+                            Samples = {
+                                new Sample {
+                                    Value = cntOut,
+                                    Timestamp = timeNow
+                                }
+                            },
+                            Labels = {
+                                new Label { Name = "__name__", Value = "sh_game_count" },
+                                new Label { Name = "game_status", Value = "OUT"}
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            SendMetricRequest(req);
+                SendMetricRequest(req);
+
+            }
+            catch (Exception e)
+            {
+                // do nothing if cannot send metrics
+            }
         }
 
 
