@@ -50,8 +50,8 @@ namespace ShitheadCardsApi.Moq
             _sut.InitializePlayer(game, game.PlayerNameTurn);
 
             // Assert
-            Assert.Equal(new List<string>() { "AD", "3H", "0D" }.ToHashSet(), players[0].InHandCards.ToHashSet());
-            Assert.Equal(new List<string>() { "KH", "5S", "8S" }.ToHashSet(), players[0].OpenCards.ToHashSet());
+            Assert.Equal(new List<string>() { "AD", "3H", "0D" }.ToHashSet(), players[0].OpenCards.ToHashSet());
+            Assert.Equal(new List<string>() { "KH", "5S", "8S" }.ToHashSet(), players[0].InHandCards.ToHashSet());
             Assert.Equal(StatusEnum.PLAYING, players[0].Status);
         }
 

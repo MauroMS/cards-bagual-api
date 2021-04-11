@@ -7,7 +7,7 @@
 
 body {
   width:95vw;
-  height:92vh;
+  height:86vh;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77a358+0,156d23+94 */
   background:
   radial-gradient(black 15%, transparent 16%) 0 0,
@@ -27,16 +27,67 @@ body {
     'player2 mycards mycards player4';
   grid-auto-columns: 25%;  
   grid-auto-rows: 20%;  
-  grid-gap: 5px;
-  padding: 10px;
+  grid-gap: 2px;
+
+  font-size: medium;
 }
+
+
+label {
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 100;
+  color:white;
+  background-color: transparent;
+  transform: rotate(-4deg);
+  font-family: 'Patua One', cursive;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: yellow;
+}
+
+h1 {
+  color: #f1c289;
+  margin: 5px;
+}
+
+a {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */  
+}
+
+@keyframes opacity {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+P {
+  font-size: small;
+}
+
 
 
 .currentPlayer {
   -webkit-text-fill-color: yellow  !important;
-  font-size: 30px;
 }
-
 
 .playerOnSetup {
   -webkit-text-fill-color: #898f8d  !important;
@@ -44,9 +95,7 @@ body {
 
 .playerOut {
   -webkit-text-fill-color: #55b8ff  !important;
-  font-size: 30px;
 }
-
 
 .hidden {
   display: none !important;
@@ -57,74 +106,25 @@ body {
   cursor: pointer;
   z-index: 100;
   color:white;
-  position: absolute;
   background-color: transparent;
-  font-size: 25px;
   transform: rotate(-4deg);
   font-family: 'Patua One', cursive;
   text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
   -webkit-text-stroke: 0.4px #000000;
   -webkit-text-fill-color: yellow;
-}
-
-label {
-  text-decoration: none;
-  cursor: pointer;
-  z-index: 100;
-  color:white;
-  background-color: transparent;
-  font-size: 20px;
-  transform: rotate(-4deg);
-  font-family: 'Patua One', cursive;
-  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
-  -webkit-text-stroke: 0.4px #000000;
-  -webkit-text-fill-color: yellow;
-}
-
-h1 {
-      color: #f1c289;
-}
-.starter {
-  top: 70%;
-  left: 60%;
-}
-
-.discard {
-  top: 70%;
-  left: 60%;
-}
-
-.commence {
-  position: relative;
-  float: left;
-}
-
-#commenceGame {
-    display: inline;
-    float: left;
-}
-
-#collectMesa {
-  display: inline;
-  text-decoration: none;
-  cursor: pointer;
-  z-index: 100;
-  color:white;
-  background-color: transparent;
-  font-size: 25px;
-  transform: rotate(-4deg);
-  font-family: 'Patua One', cursive;
-  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
-  -webkit-text-stroke: 0.4px #000000;
-  -webkit-text-fill-color: yellow;
-}
-
-#collectMesa:hover {
-  transform: scale(1.1);
+  user-select: none;
 }
 
 .button:hover {
   transform: scale(1.2);
+}
+
+.playerActionButton {
+  top: 60%;
+  left: 60%;
+  user-select: none;
+  float: left;
+  position: absolute;
 }
 
 
@@ -142,26 +142,15 @@ h1 {
     opacity: 1;
 }
 
-@keyframes opacity {
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 .mesa {
   grid-area: mesa;
   transform: rotate(0deg) !important;
-  background-color: #426f0f;
+  background-color: #607d40;
+  border-radius: 25px;
+  border-style: solid;
+  border-color: #426f0f;
+  border-width: 4px;
 }
-
 
 .playerCards {
   position: relative;
@@ -185,15 +174,12 @@ h1 {
 
 .cardBlock {  
   display: inline;
-  
   z-index: 16;
   color:white;
-  font-size: 25px;
   font-family: 'Patua One', cursive;
   text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
   -webkit-text-stroke: 0.4px #000000;
   -webkit-text-fill-color: #FFFFFF;
-
 }
 
 .cardRack {
@@ -204,7 +190,7 @@ h1 {
 .mycards {
   grid-area: mycards;
   display: inline;
-
+  padding-right: 30px;
 }
 
 .cardsDown {
@@ -217,6 +203,34 @@ h1 {
    grid-area: 2 / 1 / 4 / 1; 
    grid-auto-columns: min-content;
 }
+
+.touchMovable {
+  position: fixed;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  z-index: 10000;
+  opacity: 0.5;
+}
+
+
+/* IDS */
+
+
+#commenceGame {
+    display: inline;
+    float: left;
+}
+
+#collectMesa {
+  display: inline-block;
+}
+
+#collectMesa:hover {
+  transform: scale(1.1);
+}
+
 #myCards {
    display: grid;  
    grid-area: 3 / 1 / 5 / 1; 
@@ -233,21 +247,22 @@ h1 {
   grid-auto-columns: min-content;
   margin-top: 15px;
 }
+
 #deckCards {
   position: relative;
-  display: inline;
+  display: block;
   vertical-align: top;
-  margin-left: 10px;
+  margin-top: 10px;
 }
+
 #burnedCards {
   position: relative;
-  display: inline;
+  display: block;
   vertical-align: top;
-  margin-left: 10px;
+  margin-top: 10px;
 }
 
 #title {
-    font-size: x-large;
     grid-area: title;
     color: #f1c289;
     justify-self: end;
@@ -258,8 +273,8 @@ h1 {
 
 #gameStarter {
     position: absolute;
-    width: 96%;
-    height: 95%;
+    width: 98%;
+    height: 96%;
     background-color: green;
     z-index: 1000;
     border: 3px dashed;
@@ -268,24 +283,45 @@ h1 {
 }
 
 #gameNameDisplay {
-    font-size: x-large;
     grid-area: gameName;
     color: #f1c289;
     font-style: italic;
 }
 
-a {
-  color: inherit; /* blue colors for links too */
-  text-decoration: inherit; /* no underline */  
+#dataForm {
+  position: relative;
+  max-width: 500px; 
+  left: 10%; 
+  width: 80%; 
+}
+
+#infoBoxTitle{
+  font-family: 'Patua One', cursive;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 1);
+  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-fill-color: yellow;
+  color: yellow;
+}
+#infoBoxTitle:hover{
+  text-decoration: underline;
+  color: yellow;
+}
+
+#infoBox {
+  float: right;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  transition: height 0.2s ease-out;
+  height: 40vh;
+  margin: 10px;
+  background-color: #607d40;
 }
 
 
-
 IMG.carta {
-
   transform: rotate(171deg);
   -webkit-box-shadow: 3px 2px 32px 4px rgba(0,0,0,0.88);
-  width: 5vw;
+  width: 9vw;
 
   grid-row-start: 1;
   grid-row-end: 3;
@@ -293,10 +329,13 @@ IMG.carta {
   grid-column-end: 1;
 }
 
-@media only screen and (max-width: 1000px)  and (orientation: portrait) {
-  IMG.carta {
-      width: 10vw;
-  }
+.mycards IMG.carta {
+  width: 12vw;
+}
+
+
+#mesaCards IMG.carta {
+  width: 12vw;
 }
 
 
@@ -309,6 +348,47 @@ IMG.lastDown {
   border: dashed 2px #e52424;
 }
 
-H1 {
-  margin: 5px;
+
+
+
+/*
+@media only screen and (max-width: 1000px)  and (orientation: portrait) {
+  IMG.carta {
+      width: 10vw;
+  }
+}
+*/
+
+@media screen and (min-width: 800px) {
+  * {
+    font-size: x-large;
+  }
+  P {
+    font-size: large;
+  }
+  IMG.carta {
+      width: 5vw;
+  }
+  .mycards IMG.carta {
+      width: 6vw;
+  }
+  #mesaCards IMG.carta {
+      width: 6vw;
+  }
+  #burnedCards {
+    position: relative;
+    display: inline;
+    vertical-align: top;
+    margin-left: 10px;
+  }
+
+  #deckCards {
+    position: relative;
+    display: inline;
+    vertical-align: top;
+    margin-left: 10px;
+  }
+  #infoBox {
+    height: 15vw;
+  }
 }
