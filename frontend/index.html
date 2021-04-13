@@ -9,11 +9,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>ShitHead Multiplayer Online</title>
-  <link rel="stylesheet" type="text/css" href="style.css?rnd=13245510"/>
+  <link rel="stylesheet" type="text/css" href="style.css?rnd=1324551012"/>
   <link href="./xitiredi_files/font.css" rel="stylesheet"/>
   <link rel="icon" href="./xitiredi_files/shithead.png"/>
   <script src="./xitiredi_files/jquery.min.js"></script>
-  <script src="./game.js?rnd=123410"></script>
+  <script src="./game.js?rnd=12341012"></script>
 </head>   
     
 <body id="body">
@@ -30,7 +30,7 @@
           <input type="text" name="playerName"  maxlength="15" id="playerName" required="required" placeholder="Enter the player name" /> 
           <br/><br/>
           <div id="commence" class="commence button">
-               <img draggable="false"  src="./xitiredi_files/shithead.png" style="width: 20%"/>
+               <img draggable="false"  src="./xitiredi_files/shithead.png" style="width: 10%"/>
                <div id="commenceGame" title="Start your game">Join Game</div>
           </div>
         </form>  
@@ -70,7 +70,7 @@
     </div> 
 
     <div id="title">
-      <img draggable="false" style="width:25%;float:right" src="./xitiredi_files/shithead.png" id="shitheadIcon"/>
+      <img draggable="false" src="./xitiredi_files/shithead.png" id="shitheadIcon"/>
       <a href="https://github.com/MauroMS/shithead-cards" style="float:right"  target=”_blank”>
          Shithead <BR/>
          Multiplayer
@@ -116,7 +116,7 @@
 
     <div class="cardBlock mycards" title="Click on an available card to select/unselect it. You can select multiple of the same number. Then drag and drop to the table green area">
       <span id="myname">You</span>
-      <div class="cardRack" style="margin-top: 35px;">
+      <div class="cardRack">
         <div id="myCardsDown" class="playerCards cardsDown">
           <img class="carta mycarta" style="grid-column-start: 1;grid-column-end: 3" src="./xitiredi_files/cardback.png">
           <img class="carta mycarta" style="grid-column-start: 2;grid-column-end: 4" src="./xitiredi_files/cardback.png">
@@ -132,12 +132,12 @@
     <div class="cardBlock player1 hidden" id="p1">
       <span id="p1name">Player 1</span>(<span id="p1Count" title="number of cards on players hand">-</span>)
       <div class="cardRack">      
-        <div id="p1CardsDown" class="playerCards cardsDown"style="top:20px">
+        <div id="p1CardsDown" class="playerCards cardsDown">
           <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
         </div>
-        <div id="p1CardsUp" class="playerCards cardsUp" style="top:40px">
+        <div id="p1CardsUp" class="playerCards cardsUp">
         </div>
       </div>
   </div>
@@ -145,12 +145,12 @@
     <div class="cardBlock player2 hidden" id="p2">
       <span id="p2name">Player 2</span>(<span id="p2Count" title="number of cards on players hand">-</span>)
       <div class="cardRack">      
-        <div id="p2CardsDown" class="playerCards cardsDown" style="top:20px">
+        <div id="p2CardsDown" class="playerCards cardsDown">
           <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
         </div>
-        <div id="p2CardsUp" class="playerCards cardsUp" style="top:40px">
+        <div id="p2CardsUp" class="playerCards cardsUp">
 
         </div>
       </div>
@@ -159,12 +159,12 @@
     <div class="cardBlock player3 hidden" id="p3">
       <span id="p3name">Player 3</span>(<span id="p3Count" title="number of cards on players hand">-</span>)
       <div class="cardRack">      
-        <div id="p3CardsDown" class="playerCards cardsDown" style="top:20px">
+        <div id="p3CardsDown" class="playerCards cardsDown">
           <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
         </div>
-        <div id="p3CardsUp" class="playerCards cardsUp" style="top:40px">
+        <div id="p3CardsUp" class="playerCards cardsUp">
         </div>
       </div>
     </div>
@@ -172,12 +172,12 @@
     <div class="hidden cardBlock player4" id="p4" >
       <span id="p4name">Player 4</span>(<span id="p4Count" title="number of cards on players hand">-</span>)
       <div class="cardRack">      
-        <div id="p4CardsDown" class="playerCards cardsDown" style="top:10%">
+        <div id="p4CardsDown" class="playerCards cardsDown">
           <img class="carta" style="grid-column-start: 1;grid-column-end: 3" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 2;grid-column-end: 4" draggable="false" src="./xitiredi_files/cardback.png">
           <img class="carta" style="grid-column-start: 3;grid-column-end: 5" draggable="false" src="./xitiredi_files/cardback.png">
         </div>
-        <div id="p4CardsUp" class="playerCards cardsUp" style="top:40px">
+        <div id="p4CardsUp" class="playerCards cardsUp">
          
         </div>
       </div>

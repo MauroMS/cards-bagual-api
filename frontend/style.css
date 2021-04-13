@@ -72,8 +72,8 @@ a {
 
 
 input[type=text], select, textarea {
-  width: 100%;
-  padding: 12px;
+  width: 90%;
+  padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
@@ -184,7 +184,7 @@ P {
 
 .cardRack {
   display: grid;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .mycards {
@@ -291,7 +291,7 @@ P {
 #dataForm {
   position: relative;
   max-width: 500px; 
-  left: 10%; 
+  left: 15px; 
   width: 80%; 
 }
 
@@ -348,7 +348,10 @@ IMG.lastDown {
   border: dashed 2px #e52424;
 }
 
-
+#shitheadIcon {
+  width:40%;
+  float:right;
+}
 
 
 /*
@@ -359,7 +362,45 @@ IMG.lastDown {
 }
 */
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 500px) and (max-width: 749px) {
+  * {
+    font-size: medium;
+  }
+  P {
+    font-size: small;
+  }
+  #shitheadIcon {
+    width:20%;
+    float:right;
+  }
+  IMG.carta {
+      width: 5vw;
+  }
+  .mycards IMG.carta {
+      width: 6vw;
+  }
+  #mesaCards IMG.carta {
+      width: 6vw;
+  }
+  #burnedCards {
+    position: relative;
+    display: inline;
+    vertical-align: top;
+    margin-left: 10px;
+  }
+
+  #deckCards {
+    position: relative;
+    display: inline;
+    vertical-align: top;
+    margin-left: 10px;
+  }
+  #infoBox {
+    height: 15vw;
+  }
+}
+
+@media screen and (min-width: 750px) {
   * {
     font-size: x-large;
   }
@@ -368,6 +409,10 @@ IMG.lastDown {
   }
   IMG.carta {
       width: 5vw;
+  }
+  #shitheadIcon {
+    width:20%;
+    float:right;
   }
   .mycards IMG.carta {
       width: 6vw;
