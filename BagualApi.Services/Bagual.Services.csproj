@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Bagual.Services</AssemblyName>
+    <RootNamespace>Bagual.Services</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Protos\**" />
+    <EmbeddedResource Remove="Protos\**" />
+    <None Remove="Protos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Escopa\" />
+    <Folder Include="Pife\" />
+    <Folder Include="Shithead\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.15.4" />
+    <PackageReference Include="Grpc.Core" Version="2.36.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.36.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Snappy.Standard" Version="0.2.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Shithead\Protos\prometheus.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+</Project>

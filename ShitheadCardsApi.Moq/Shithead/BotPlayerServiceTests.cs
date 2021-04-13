@@ -1,12 +1,13 @@
+using Bagual.Services.Shithead.Interfaces;
+using Bagual.Services.Shithead.Models;
+using Bagual.Services.Shithead.Services;
 using Moq;
-using ShitheadCardsApi.Interfaces;
-using ShitheadCardsApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ShitheadCardsApi.Moq
+namespace Bagual.Services.Tests
 {
     public class BotPlayerServiceTests
     {

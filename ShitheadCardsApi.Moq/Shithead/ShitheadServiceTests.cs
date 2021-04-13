@@ -1,10 +1,9 @@
-using ShitheadCardsApi.Models;
-using System;
+using Bagual.Services.Shithead.Models;
+using Bagual.Services.Shithead.Services;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace ShitheadCardsApi.Moq
+namespace Bagual.Services.Tests
 {
     public class ShitheadServiceTests
     {
