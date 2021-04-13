@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://go.microsoft.com/fwlink/?linkid=2134798
 # More GitHub Actions for Azure: https://go.microsoft.com/fwlink/?linkid=2135048
 
-name: Azure App Service - bagualapi(Production), Build and deploy DotnetCore app
+name: Build and Deploy BagualApi
 
 on:
   push:
@@ -25,6 +25,9 @@ jobs:
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
+
+    - name: Run Tests
+      run: dotnet test
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
