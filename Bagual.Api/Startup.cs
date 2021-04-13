@@ -39,10 +39,10 @@ namespace Bagual.Api
                 swagger.IncludeXmlComments(xmlPath);
             });
 
-            services.AddScoped<IGameService, GameService>();
-            services.AddSingleton<IShitheadService, ShitheadService>();
-            services.AddScoped<IBotPlayerService, BotPlayerService>();
-            services.AddHostedService<ConsumeBotPlayersService>();
+            //services.AddScoped<IGameService, GameService>();
+            //services.AddSingleton<IShitheadService, ShitheadService>();
+            //services.AddScoped<IBotPlayerService, BotPlayerService>();
+            //services.AddHostedService<ConsumeBotPlayersService>();
 
             services.AddCors(o => o.AddPolicy("CorsDisabled", builder =>
             {
