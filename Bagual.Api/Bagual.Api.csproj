@@ -1,15 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Bagual.Api</RootNamespace>
     <AssemblyName>Bagual.Api</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <UserSecretsId>3ca63a89-710b-4f2b-bd88-1cefb7db4cf5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
   </ItemGroup>
 
