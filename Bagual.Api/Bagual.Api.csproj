@@ -1,16 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Bagual.Api</RootNamespace>
+    <AssemblyName>Bagual.Api</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>obj\Debug\netcoreapp3.1\Bagual.Api.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
@@ -19,6 +14,5 @@
   <ItemGroup>
     <ProjectReference Include="..\BagualApi.Services\Bagual.Services.csproj" />
   </ItemGroup>
-
 
 </Project>
