@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    let baseURL = 'https://shitheadapi.azurewebsites.net/Shithead';
+    let baseURL = 'https://bagualapi.azurewebsites.net/Shithead';
     //let baseURL = 'http://localhost:5000/Shithead';
 
     let imageURL = 'https://deckofcardsapi.com/static/img/XX.png';
